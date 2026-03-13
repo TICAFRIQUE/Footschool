@@ -10,8 +10,11 @@ use App\Http\Controllers\backend\RoleController;
 use App\Http\Controllers\backend\CommandeServiceController;
 use App\Http\Controllers\frontend\BaseController;
 use App\Http\Controllers\frontend\HebergementController;
+use App\Http\Controllers\frontend\IndexController;
 use App\Http\Controllers\frontend\NomDomaineController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\backend\CandidatController;
+
 
 
 
@@ -83,20 +86,12 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
         route::delete('delete/{id}', 'delete')->name('module.delete');
     });
 
-
- 
+    Route::get('/candidat',          [CandidatController::class, 'index'])->name('candidat.index');
+    Route::delete('/candidat/{id}',  [CandidatController::class, 'destroy'])->name('candidat.destroy');
 });
 
 
-
-
-
-
-
-
-
-
-
-
-
-
+Route::controller(IndexController::class)->group(function () {
+    route::get('/', 'index')->name('index');
+    Route::post('/inscription', 'store')->name('inscription.store');
+});

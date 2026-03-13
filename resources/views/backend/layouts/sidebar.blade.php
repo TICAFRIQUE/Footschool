@@ -35,6 +35,12 @@
                             <i class="ri-dashboard-2-line"></i> <span>TABLEAU DE BORD</span>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link menu-link {{ Route::is('candidat.*') ? 'active' : '' }} "
+                            href="{{ route('candidat.index') }}">
+                            <i class="ri-user-2-line"></i> <span>CANDIDATS</span>
+                        </a>
+                    </li>
                 @endcan
 
 
