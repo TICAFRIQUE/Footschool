@@ -19,7 +19,7 @@ return new class extends Migration
             $table->date('date_naissance');
             $table->integer('age');
             $table->string('lieu_naissance');
-            $table->string('telephone');
+            $table->string('telephone')->unique();
             $table->string('ville');
 
             // Éducation
