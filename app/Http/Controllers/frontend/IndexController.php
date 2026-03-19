@@ -14,6 +14,11 @@ class IndexController extends Controller
         $data = config('ville_commune');
         return view('frontend.index', compact('data'));
     }
+    public function index2()
+    {
+        $data = config('ville_commune');
+        return view('frontend.index2', compact('data'));
+    }
 
     // ✅ Normalisation téléphone
     private function normalizePhone($phone)

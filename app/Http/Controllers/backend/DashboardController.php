@@ -11,8 +11,8 @@ class DashboardController extends Controller
 
     // public function index(Request $request)
     // {
-      
-        
+
+
 
     //     //Liste des produit les plus vendus
     //     $produitsLesPlusVendus = Produit::withCount('ventes')
@@ -28,7 +28,7 @@ class DashboardController extends Controller
     //         });
 
     //     // statistique chiffre pour card
-    
+
 
     //     // Montant total des ventes
     //     $montantTotalVentes = Vente::sum('montant_total');
@@ -36,10 +36,10 @@ class DashboardController extends Controller
     //     // Montant total des dépenses
     //     $montantTotalDepenses = Depense::sum('montant');
 
-       
+
     //     // dd($montantTotalVentes);
 
-     
+
 
     //     $revenus = DB::table('ventes')
     //         ->selectRaw("MONTHNAME(created_at) as mois, MONTH(created_at) as mois_num, SUM(montant_total) as total_revenu")
@@ -63,7 +63,7 @@ class DashboardController extends Controller
 
     //     // dd($produitsLesPlusVendus->toArray());
     //     return view('backend.pages.index', compact(
-          
+
     //         'produitsLesPlusVendus',
     //         'montantTotalVentes',
     //         'montantTotalDepenses',
@@ -75,8 +75,20 @@ class DashboardController extends Controller
     // }
 
 
-    public function index(Request $request)
+
+    public function index()
     {
-        return view('backend.pages.index');
+        // Récupération de la liste pour le tableau
+        $candidats = \App\Models\Candidat::latest()->get();
+
+        // Calcul des statistiques pour les widgets
+        $stats = [
+            'total'      => $candidats->count(),
+            'villes'     => $candidats->unique('ville')->count(),
+            'niveaux'    => $candidats->unique('niveau_etudes')->count(),
+            'aujourdhui' => \App\Models\Candidat::whereDate('created_at', today())->count(),
+        ];
+
+        return view('backend.pages.index', compact('stats', 'candidats'));
     }
 }

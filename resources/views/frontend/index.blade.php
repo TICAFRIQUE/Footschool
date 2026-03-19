@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SchoolFoot.ci — Détection de Talents Footballistiques</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet" />
   <meta name="csrf-token" content="{{ csrf_token() }}">
   <style>
@@ -784,9 +785,9 @@
           <h2 class="section-title">Ton talent<br />mérite d'être<br /><span class="text-orange">vu.</span></h2>
           <div class="divider-line"></div>
           <p class="pres-text">
-            SchoolFoot est la toute première émission de téléréalité dédiée à la détection de jeunes talents du football non professionnel (Football du quartier). Si tu maîtrises le <strong>Grand Poto</strong>, le <strong>Petit Poto</strong> ou le <strong>Maracana</strong>, et que tu rêves d'un avenir dans le football professionnel, cette plateforme est faite pour toi.<br /><br />
+            SchoolFoot est la toute première émission de téléréalité dédiée à la détection de jeunes talents du football non professionnel (Football du quartier). Si tu maîtrises les <strong>Grands Poteaux</strong>, les <strong>Petits Poteaux</strong> ou le <strong>Maracana</strong>, et que tu rêves d'un avenir dans le football professionnel, cette plateforme est faite pour toi.<br /><br />
             Pas besoin de réseau, pas besoin d'agent. Juste ton talent et ta détermination.
-            <strong class="text-green">L'inscription est 100% gratuite.</strong>
+            <strong class="text-green">La préinscription est 100% gratuite.</strong>
           </p>
         </div>
         <div class="col-lg-6">
@@ -800,13 +801,13 @@
             <div class="col-sm-6">
               <div class="pres-card"><span class="icon">📺</span>
                 <h4>Téléréalité</h4>
-                <p>Ton parcours diffusé à la télévision. Deviens une star du football ivoirien.</p>
+                <p>Ton parcours diffusé à la télévision. Deviens une star du football.</p>
               </div>
             </div>
             <div class="col-sm-6">
               <div class="pres-card"><span class="icon">🎯</span>
                 <h4>17 à 22 Ans</h4>
-                <p>Ouvert aux joueurs de Grand Poto, Petit Poto et Maracana sans réseau pro.</p>
+                <p>Ouvert aux joueurs de Grands Poteaux, Petits Poteaux et Maracana sans réseau pro.</p>
               </div>
             </div>
             <div class="col-sm-6">
@@ -829,7 +830,7 @@
         <h2 class="section-title">Préinscription<br /><span class="text-orange">Gratuite</span></h2>
         <div class="divider-line mx-auto"></div>
         <p style="color: rgba(248,249,245,0.5); font-size: 0.93rem; max-width: 520px; margin: 0 auto;">
-          Remplis tous les champs ci-dessous. Un membre de notre équipe te contactera sous 72h.
+          Remplissez tous les champs ci-dessous. Un membre de notre équipe vous contactera à la fin de la période des préinscriptions.
         </p>
       </div>
 
@@ -1056,7 +1057,7 @@
                 <span style="font-size: 1.3rem">🛡️</span>
                 <p style="font-size: 0.82rem; color: rgba(248,249,245,0.65); margin: 0; line-height: 1.5;">
                   <strong style="color: #6dffa0">Rappel :</strong> La préinscription est 100% gratuite.
-                  SchoolFoot ne vous demandera <strong>jamais</strong> de payer pour participer. Signalez toute demande d'argent.
+
                 </p>
               </div>
 
@@ -1076,6 +1077,7 @@
   <!-- FOOTER -->
   <footer id="footer">
     <div class="container">
+      <p class="text-center">Pour tous besoins Contactez-nous: <a href="mailto:info@schoolfoot.ci">info@schoolfoot.ci</a></p>
       <div class="legal-text">
         &copy; 2026 SchoolFoot — Tous droits réservés. &bull; Les données collectées sont utilisées uniquement dans le cadre de la préinscription au programme SchoolFoot. Conformément à la réglementation en vigueur, vous disposez d'un droit d'accès, de modification et de suppression de vos données. &bull; Site non commercial — Préinscription gratuite.
       </div>
@@ -1096,6 +1098,55 @@
     </div>
   </div>
 
+  <style>
+    .floating-contact {
+      position: fixed;
+      right: 20px;
+      bottom: 30px;
+      width: 55px;
+      height: 55px;
+      background: #fff;
+      color: #0e4d1c;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      z-index: 9999;
+      transition: all 0.3s ease;
+      text-decoration: none;
+    }
+
+    .floating-contact:hover {
+      background: #f0f2f5;
+      transform: scale(1.1);
+      color: #c05e08;
+    }
+
+    /* Tooltip */
+    .floating-contact::after {
+      content: "Contact";
+      position: absolute;
+      right: 65px;
+      background: #163d1a;
+      color: #fff;
+      font-size: 12px;
+      padding: 5px 8px;
+      border-radius: 4px;
+      opacity: 0;
+      transition: 0.3s;
+      white-space: nowrap;
+    }
+
+    .floating-contact:hover::after {
+      opacity: 1;
+    }
+  </style>
+
+  <a href="mailto:info@schoolfoot.ci" class="floating-contact">
+    <i class="bi bi-envelope-at-fill"></i>
+  </a>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
   <script>

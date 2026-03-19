@@ -1,25 +1,67 @@
 @extends('backend.layouts.master')
-@section('title')
-Candidats
-@endsection
+@section('title') Candidats @endsection
 
 @section('css')
 <link href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" rel="stylesheet" type="text/css" />
-<link href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.bootstrap.min.css" rel="stylesheet" type="text/css" />
 <link href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css" rel="stylesheet" type="text/css" />
+<link href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.bootstrap.min.css" rel="stylesheet" type="text/css" />
+
 <style>
+    /* Table Styling */
+    .table-card thead th {
+        background-color: #f3f6f9;
+        text-transform: uppercase;
+        font-size: 11px;
+        color: #878a99;
+        font-weight: 700;
+        border-bottom: 1px solid #e9ebec;
+    }
+
+    .table-card tbody td {
+        vertical-align: middle;
+        padding: 0.75rem 0.6rem;
+    }
+
+    /* Buttons Export Style - Responsive adjustment */
+    .dt-buttons {
+        margin-bottom: 15px;
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        /* Permet aux boutons de passer à la ligne sur mobile */
+    }
+
+    .btn-export {
+        border-radius: 4px !important;
+        font-weight: 600;
+        font-size: 12px;
+    }
+
+    .avatar-soft-primary {
+        background-color: rgba(64, 81, 137, 0.1);
+        color: #405189;
+    }
+
     .filter-card {
-        background-color: #f8f9fa;
-        border: 1px solid #e9ebec;
-        border-left: 4px solid #405189;
+        border-top: 3px solid #405189;
+    }
+
+    .modal-header-gradient {
+        background: linear-gradient(to right, #405189, #0ab39c);
+        color: white;
+    }
+
+    /* Fix pour DataTables Responsive sur mobile */
+    table.dataTable.dtr-inline.collapsed>tbody>tr>td.dtr-control:before {
+        background-color: #405189 !important;
     }
 </style>
 @endsection
 
 @section('content')
 @component('backend.components.breadcrumb')
-@slot('li_1') Liste @endslot
-@slot('title') Candidats @endslot
+@slot('li_1') Administration @endslot
+@slot('title') Liste des Candidats @endslot
 @endcomponent
 
 <div class="row">
@@ -27,35 +69,35 @@ Candidats
         <div class="card filter-card mb-3">
             <div class="card-body">
                 <div class="row g-3">
-                    <div class="col-md-2">
-                        <label class="form-label fw-bold text-uppercase fs-11">Âge Min</label>
-                        <input type="number" id="min_age" class="form-control form-control-sm" placeholder="Ex: 18">
-                    </div>
-                    <div class="col-md-2">
-                        <label class="form-label fw-bold text-uppercase fs-11">Âge Max</label>
-                        <input type="number" id="max_age" class="form-control form-control-sm" placeholder="Ex: 35">
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label fw-bold text-uppercase fs-11">Niveau d'études</label>
-                        <select id="select_diplome" class="form-select form-select-sm">
+                    <div class="col-sm-6 col-md-3">
+                        <label class="form-label text-muted small fw-bold">NIVEAU D'ÉTUDES</label>
+                        <select id="select_diplome" class="form-select">
                             <option value="">Tous les niveaux</option>
                             @foreach($candidats->pluck('niveau_etudes')->unique() as $niveau)
                             <option value="{{ $niveau }}">{{ $niveau }}</option>
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md-3">
-                        <label class="form-label fw-bold text-uppercase fs-11">Ville</label>
-                        <select id="select_ville" class="form-select form-select-sm">
+                    <div class="col-sm-6 col-md-3">
+                        <label class="form-label text-muted small fw-bold">VILLE</label>
+                        <select id="select_ville" class="form-select">
                             <option value="">Toutes les villes</option>
                             @foreach($candidats->pluck('ville')->unique() as $ville)
                             <option value="{{ $ville }}">{{ $ville }}</option>
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md-2 d-flex align-items-end">
-                        <button id="reset_filters" class="btn btn-sm btn-soft-danger w-100">
-                            <i class="ri-refresh-line align-bottom me-1"></i> Réinitialiser
+                    <div class="col-6 col-md-2">
+                        <label class="form-label text-muted small fw-bold">ÂGE MIN</label>
+                        <input type="number" id="min_age" class="form-control" placeholder="18">
+                    </div>
+                    <div class="col-6 col-md-2">
+                        <label class="form-label text-muted small fw-bold">ÂGE MAX</label>
+                        <input type="number" id="max_age" class="form-control" placeholder="45">
+                    </div>
+                    <div class="col-md-2 d-grid d-md-flex align-items-end">
+                        <button id="reset_filters" class="btn btn-soft-secondary w-100">
+                            <i class="ri-refresh-line align-bottom me-1"></i> RAZ
                         </button>
                     </div>
                 </div>
@@ -63,172 +105,213 @@ Candidats
         </div>
 
         <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="card-title mb-0">
-                    Liste des préinscriptions
-                    <span class="badge bg-primary ms-2">{{ $candidats->count() }}</span>
-                </h5>
+            <div class="card-header border-0">
+                <h5 class="card-title mb-0">Base de données Candidats</h5>
             </div>
-
             <div class="card-body">
-                <div class="table-responsive">
-                    <table id="buttons-datatables" class="display table table-bordered" style="width:100%">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Nom complet</th>
-                                <th>Date de naissance</th>
-                                <th>Âge</th>
-                                <th>Lieu de naissance</th>
-                                <th>Téléphone</th>
-                                <th>Ville</th>
-                                <th>Diplôme</th>
-                                <th>Langues</th>
-                                <th>Contact urgence</th>
-                                <th>Inscription</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($candidats as $key => $item)
-                            <tr id="row_{{ $item->id }}">
-                                <td>{{ ++$key }}</td>
-                                <td>
-                                    <div class="d-flex align-items-center gap-2">
+                <table id="candidats-datatable" class="table table-card dt-responsive nowrap align-middle mb-0" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Identité & Contact</th>
+                            <th scope="col">Âge</th>
+                            <th scope="col">Localisation</th>
+                            <th scope="col">Diplôme</th>
+                            <th scope="col">Inscription</th>
+                            <th scope="col" class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($candidats as $key => $item)
+                        <tr id="row_{{ $item->id }}">
+                            <td><span class="text-muted fw-bold">{{ ++$key }}</span></td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-shrink-0 me-3">
                                         <div class="avatar-xs">
-                                            <span class="avatar-title rounded-circle bg-soft-primary text-primary">
+                                            <div class="avatar-title rounded-circle avatar-soft-primary fw-bold">
                                                 {{ strtoupper(substr($item->nom, 0, 1)) }}
-                                            </span>
-                                        </div>
-                                        <div>
-                                            <strong class="text-primary">{{ strtoupper($item->nom) }}</strong>
-                                            <br>
-                                            <small class="text-muted">{{ $item->prenom }}</small>
+                                            </div>
                                         </div>
                                     </div>
-                                </td>
-                                <td>{{ \Carbon\Carbon::parse($item->date_naissance)->format('d/m/Y') }}</td>
-                                <td class="text-center">
-                                    <span class="badge bg-soft-info text-info">{{ $item->age }} ans</span>
-                                </td>
-                                <td>{{ $item->lieu_naissance }}</td>
-                                <td>{{ $item->telephone }}</td>
-                                <td>{{ $item->ville }}</td>
-                                <td><span class="badge bg-soft-secondary text-secondary">{{ $item->niveau_etudes }}</span></td>
-                                <td>
-                                    @if(is_array($item->langues))
-                                    @foreach($item->langues as $langue)
-                                    <span class="badge bg-soft-success text-success me-1">{{ $langue }}</span>
-                                    @endforeach
-                                    @endif
-                                </td>
-                                <td>{{ $item->urgence_nom }} ({{ $item->urgence_tel }})</td>
-                                <td>{{ \Carbon\Carbon::parse($item->created_at)->format('d/m/Y H:i') }}</td>
-                                <td>
-                                    <div class="dropdown d-inline-block">
-                                        <button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown">
-                                            <i class="ri-more-fill align-middle"></i>
-                                        </button>
-                                        <ul class="dropdown-menu dropdown-menu-end">
-                                            <li>
-                                                <a type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#modalDetail{{ $item->id }}">
-                                                    <i class="ri-eye-fill align-bottom me-2 text-muted"></i> Voir détail
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="javascript:void(0);" class="dropdown-item text-danger delete" data-id="{{ $item->id }}">
-                                                    <i class="ri-delete-bin-fill align-bottom me-2"></i> Supprimer
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </td>
-                            </tr>
-
-                            {{-- Modal Detail Simplifié pour l'exemple --}}
-                            <div class="modal fade" id="modalDetail{{ $item->id }}" tabindex="-1" aria-hidden="true">
-                                <div class="modal-dialog modal-lg">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title">Détails de {{ $item->nom }}</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <p><strong>Niveau :</strong> {{ $item->niveau_etudes }}</p>
-                                            <p><strong>Ville :</strong> {{ $item->ville }}</p>
-                                        </div>
+                                    <div class="flex-grow-1">
+                                        <h6 class="fs-14 mb-0 text-dark">{{ strtoupper($item->nom) }} {{ $item->prenom }}</h6>
+                                        <p class="text-muted mb-0 small"><i class="ri-phone-fill me-1"></i>{{ $item->telephone }}</p>
                                     </div>
                                 </div>
-                            </div>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
+                            </td>
+                            <td><span class="badge bg-info-subtle text-info fs-12 px-2">{{ $item->age }} ans</span></td>
+                            <td><i class="ri-map-pin-line text-muted me-1"></i>{{ $item->ville }}</td>
+                            <td class="fw-medium text-uppercase small">{{ $item->niveau_etudes }}</td>
+                            <td class="text-muted small">{{ \Carbon\Carbon::parse($item->created_at)->format('d/m/Y') }}</td>
+                            <td class="text-end">
+                                <div class="dropdown">
+                                    <button class="btn btn-soft-secondary btn-sm" data-bs-toggle="dropdown">
+                                        <i class="ri-more-2-fill"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end shadow">
+                                        <li>
+                                            <a class="dropdown-item" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#modalDetail{{ $item->id }}">
+                                                <i class="ri-eye-fill me-2 align-bottom text-muted"></i> Fiche Profil
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <hr class="dropdown-divider">
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item text-danger delete" href="javascript:void(0);" data-id="{{ $item->id }}">
+                                                <i class="ri-delete-bin-fill me-2 align-bottom"></i> Supprimer
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
 </div>
+
+{{-- On déporte les modals hors du tableau pour éviter les bugs de rendu Responsive --}}
+@foreach ($candidats as $item)
+<div class="modal fade" id="modalDetail{{ $item->id }}" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0">
+            <div class="modal-header modal-header-gradient p-3">
+                <h5 class="modal-title text-white">Dossier Candidat : {{ $item->nom }}</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="row g-4">
+                    <div class="col-md-6 border-end">
+                        <h6 class="text-primary text-uppercase fs-11 fw-bold mb-3">Informations Civiles</h6>
+                        <div class="mb-3">
+                            <p class="text-muted mb-1 small">Nom & Prénoms</p>
+                            <p class="fw-bold">{{ strtoupper($item->nom) }} {{ $item->prenom }}</p>
+                        </div>
+                        <div class="row">
+                            <div class="col-6 mb-3">
+                                <p class="text-muted mb-1 small">Date de Naissance</p>
+                                <p class="fw-medium">{{ \Carbon\Carbon::parse($item->date_naissance)->format('d/m/Y') }}</p>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <p class="text-muted mb-1 small">Lieu</p>
+                                <p class="fw-medium">{{ $item->lieu_naissance }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 ps-md-4">
+                        <h6 class="text-primary text-uppercase fs-11 fw-bold mb-3">Profil Académique</h6>
+                        <div class="mb-3">
+                            <p class="text-muted mb-1 small">Niveau d'études</p>
+                            <p class="fw-bold text-dark">{{ $item->niveau_etudes }}</p>
+                        </div>
+                        <div class="mb-3">
+                            <p class="text-muted mb-1 small">Maîtrise des Langues</p>
+                            <div class="d-flex gap-2">
+                                <span class="badge bg-light text-body border px-2">FR: {{ $item->niveau_fr }}</span>
+                                <span class="badge bg-light text-body border px-2">EN: {{ $item->niveau_en }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer bg-light p-3">
+                <button type="button" class="btn btn-ghost-dark" data-bs-dismiss="modal">Fermer</button>
+                <a href="tel:{{ $item->telephone }}" class="btn btn-primary shadow-sm px-4">
+                    <i class="ri-phone-line me-1 align-bottom"></i> Contacter
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+@endforeach
+
 @endsection
 
 @section('script')
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.print.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
 
 <script>
     $(document).ready(function() {
-        // Initialisation DataTable
-        var table = $('#buttons-datatables').DataTable({
-            "order": [
-                [0, "asc"]
-            ],
+        var table = $('#candidats-datatable').DataTable({
+            responsive: true, // Activation du responsive
             "language": {
                 "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/French.json"
-            }
+            },
+            dom: '<"row align-items-center"<"col-sm-12 col-md-auto"B><"col-sm-12 col-md"f>>rt<"row align-items-center"<"col-sm-12 col-md"i><"col-sm-12 col-md-auto"p>>',
+            buttons: [{
+                    extend: 'excelHtml5',
+                    text: '<i class="ri-file-excel-line"></i> Excel',
+                    className: 'btn btn-success btn-export',
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 4, 5]
+                    }
+                },
+                {
+                    extend: 'pdfHtml5',
+                    text: '<i class="ri-file-pdf-line"></i> PDF',
+                    className: 'btn btn-danger btn-export',
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 4, 5]
+                    },
+                    customize: function(doc) {
+                        doc.styles.tableHeader.fillColor = '#405189';
+                        doc.styles.tableHeader.color = 'white';
+                        doc.content[1].table.widths = ['5%', '35%', '10%', '15%', '20%', '15%'];
+                    }
+                },
+                {
+                    extend: 'print',
+                    text: '<i class="ri-printer-line"></i> Imprimer',
+                    className: 'btn btn-info btn-export',
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 4, 5]
+                    }
+                }
+            ]
         });
 
-        // Filtre Custom : Âge (Colonne index 3)
-        $.fn.dataTable.ext.search.push(
-            function(settings, data, dataIndex) {
-                var min = parseInt($('#min_age').val(), 10);
-                var max = parseInt($('#max_age').val(), 10);
-                var age = parseFloat(data[3]) || 0;
-
-                if ((isNaN(min) && isNaN(max)) ||
-                    (isNaN(min) && age <= max) ||
-                    (min <= age && isNaN(max)) ||
-                    (min <= age && age <= max)) {
-                    return true;
-                }
-                return false;
-            }
-        );
-
-        // Déclencheur Âge
+        // Les filtres restent les mêmes...
         $('#min_age, #max_age').on('keyup change', function() {
             table.draw();
         });
-
-        // Déclencheur Diplôme (Colonne Index 7)
         $('#select_diplome').on('change', function() {
-            table.column(7).search(this.value).draw();
+            table.column(4).search(this.value).draw();
         });
-
-        // Déclencheur Ville (Colonne Index 6)
         $('#select_ville').on('change', function() {
-            table.column(6).search(this.value).draw();
+            table.column(3).search(this.value).draw();
         });
-
-        // Réinitialisation
         $('#reset_filters').on('click', function() {
             $('#min_age, #max_age, #select_diplome, #select_ville').val('');
-            table.search('').column(6).search('').column(7).search('').draw();
+            table.search('').column(3).search('').column(4).search('').draw();
         });
 
-        // Suppression AJAX
+        // Custom Age Filtering
+        $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+            var min = parseInt($('#min_age').val(), 10);
+            var max = parseInt($('#max_age').val(), 10);
+            var age = parseFloat(data[2]) || 0;
+            if ((isNaN(min) && isNaN(max)) || (isNaN(min) && age <= max) || (min <= age && isNaN(max)) || (min <= age && age <= max)) return true;
+            return false;
+        });
+
+        // Ajax Delete
         $(document).on('click', '.delete', function() {
             var id = $(this).data('id');
-            if (confirm("Supprimer ce candidat ?")) {
+            if (confirm("Supprimer ce profil ?")) {
                 $.ajax({
                     url: '/candidat/' + id,
                     type: 'DELETE',
