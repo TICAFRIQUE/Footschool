@@ -1050,7 +1050,14 @@
                   </div>
                 </div>
               </div>
-
+              <div class="mb-3 mt-2" id="captcha-wrap">
+                <label class="form-label">Vérification <span class="required-star">*</span></label>
+                <div style="display:flex; gap:10px; align-items:center;">
+                  <span id="captcha-question" style="font-weight:700;"></span>
+                  <input type="text" id="captcha-input" class="form-control" placeholder="Réponse" style="max-width:120px;">
+                </div>
+                <div class="invalid-msg" id="captcha-error" style="display:none;">Réponse incorrecte.</div>
+              </div>
               <!-- RAPPEL -->
               <div class="d-flex align-items-center gap-2 mt-4 p-3"
                 style="background: rgba(35,166,61,0.08); border: 1px solid rgba(35,166,61,0.22); border-radius: 10px;">
@@ -1150,6 +1157,17 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
   <script>
+
+    let captchaAnswer = null;
+
+    function generateCaptcha() {
+      const a = Math.floor(Math.random() * 10) + 1;
+      const b = Math.floor(Math.random() * 10) + 1;
+      captchaAnswer = a + b;
+      document.getElementById("captcha-question").textContent = `${a} + ${b} = ?`;
+    }
+
+    generateCaptcha();
     /* ======================================================
        POPULATE JOUR & ANNEE
     ====================================================== */
@@ -1275,6 +1293,19 @@
       setError("wrap-urgence-tel", !validPhone(urgenceTel));
       if (!validPhone(urgenceTel)) valid = false;
 
+      // ✅ Validation Captcha
+      const captchaInput = document.getElementById("captcha-input").value.trim();
+      const captchaValid = parseInt(captchaInput, 10) === captchaAnswer;
+      const captchaError = document.getElementById("captcha-error");
+      if (!captchaValid) {
+        captchaError.style.display = "block";
+        setError("captcha-wrap", true);
+        valid = false;
+      } else {
+        captchaError.style.display = "none";
+        setError("captcha-wrap", false);
+      }
+
       return valid;
     }
 
@@ -1316,6 +1347,9 @@
           form.querySelectorAll(".field-error").forEach(el => el.classList.remove("field-error"));
           document.getElementById("dob-age-msg").style.display = "none";
           setLanguesError(false);
+          // ✅ Régénère le captcha
+          document.getElementById("captcha-error").style.display = "none";
+          generateCaptcha();
 
           // ✅ CORRECTION : affiche l'overlay succès
           document.getElementById("success-overlay").classList.add("active");
@@ -1342,9 +1376,13 @@
               setError(map[field], true);
             }
           });
+          // ✅ Régénère le captcha après erreur
+          generateCaptcha();
           showToast("error", data.message || "Une erreur est survenue.");
 
         } else {
+          // ✅ Régénère le captcha après erreur
+          generateCaptcha();
           showToast("error", "Une erreur est survenue. Réessaie.");
         }
 

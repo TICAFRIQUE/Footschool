@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DashboardStatsController;
 use App\Http\Controllers\backend\AdminController;
 use App\Http\Controllers\backend\DashboardController;
 use App\Http\Controllers\backend\ModuleController;
@@ -12,13 +13,9 @@ use App\Http\Controllers\frontend\BaseController;
 use App\Http\Controllers\frontend\HebergementController;
 use App\Http\Controllers\frontend\IndexController;
 use App\Http\Controllers\frontend\NomDomaineController;
+use App\Http\Controllers\Api\StatsController;       // ← nouveau StatsController
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\backend\CandidatController;
-
-
-
-
-
 
 
 Route::fallback(function () {
@@ -27,71 +24,77 @@ Route::fallback(function () {
 
 Route::middleware(['admin'])->prefix('admin')->group(function () {
 
-    // login and logout
+    // ── Authentification ─────────────────────────────────────────
     Route::controller(AdminController::class)->group(function () {
-        route::get('/login', 'login')->name('admin.login')->withoutMiddleware('admin'); // page formulaire de connexion
-        route::post('/login', 'login')->name('admin.login')->withoutMiddleware('admin'); // envoi du formulaire
-        route::post('/logout', 'logout')->name('admin.logout');
+        Route::get('/login',  'login')->name('admin.login')->withoutMiddleware('admin');
+        Route::post('/login', 'login')->name('admin.login')->withoutMiddleware('admin');
+        Route::post('/logout', 'logout')->name('admin.logout');
     });
 
-
-
-    // dashboard admin
+    // ── Dashboard ─────────────────────────────────────────────────
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard.index');
 
-    // parametre application
+    // ── Stats API (appelées en AJAX par le dashboard) ─────────────
+    // Accessibles via GET /admin/stats/all?days=30
+    //                     GET /admin/stats/daily?days=7
+    // Protégées par le même middleware 'admin' que le reste.
+    Route::get('/stats/all',   [StatsController::class, 'all'])->name('stats.all');
+    Route::get('/stats/daily', [StatsController::class, 'daily'])->name('stats.daily');
+
+    // ── Paramètres application ────────────────────────────────────
     Route::prefix('parametre')->controller(ParametreController::class)->group(function () {
-        route::get('', 'index')->name('parametre.index');
-        route::post('store', 'store')->name('parametre.store');
-        route::get('maintenance-up', 'maintenanceUp')->name('parametre.maintenance-up');
-        route::get('maintenance-down', 'maintenanceDown')->name('parametre.maintenance-down');
-        route::get('optimize-clear', 'optimizeClear')->name('parametre.optimize-clear');
-        Route::get('download-backup/{file}', 'downloadBackup')->name('setting.download-backup');  // download backup db
+        Route::get('',                   'index')->name('parametre.index');
+        Route::post('store',             'store')->name('parametre.store');
+        Route::get('maintenance-up',     'maintenanceUp')->name('parametre.maintenance-up');
+        Route::get('maintenance-down',   'maintenanceDown')->name('parametre.maintenance-down');
+        Route::get('optimize-clear',     'optimizeClear')->name('parametre.optimize-clear');
+        Route::get('download-backup/{file}', 'downloadBackup')->name('setting.download-backup');
     });
 
-
-    //register admin
+    // ── Admins ────────────────────────────────────────────────────
     Route::prefix('register')->controller(AdminController::class)->group(function () {
-        route::get('', 'index')->name('admin-register.index');
-        route::post('store', 'store')->name('admin-register.store');
-        route::post('update/{id}', 'update')->name('admin-register.update');
-        route::delete('delete/{id}', 'delete')->name('admin-register.delete');
-        route::get('profil/{id}', 'profil')->name('admin-register.profil');
-        route::post('change-password', 'changePassword')->name('admin-register.new-password');
+        Route::get('',                    'index')->name('admin-register.index');
+        Route::post('store',              'store')->name('admin-register.store');
+        Route::post('update/{id}',        'update')->name('admin-register.update');
+        Route::delete('delete/{id}',      'delete')->name('admin-register.delete');
+        Route::get('profil/{id}',         'profil')->name('admin-register.profil');
+        Route::post('change-password',    'changePassword')->name('admin-register.new-password');
     });
 
-    //role
+    // ── Rôles ─────────────────────────────────────────────────────
     Route::prefix('role')->controller(RoleController::class)->group(function () {
-        route::get('', 'index')->name('role.index');
-        route::post('store', 'store')->name('role.store');
-        route::post('update/{id}', 'update')->name('role.update');
-        route::delete('delete/{id}', 'delete')->name('role.delete');
+        Route::get('',                'index')->name('role.index');
+        Route::post('store',          'store')->name('role.store');
+        Route::post('update/{id}',    'update')->name('role.update');
+        Route::delete('delete/{id}',  'delete')->name('role.delete');
     });
 
-    //permission
+    // ── Permissions ───────────────────────────────────────────────
     Route::prefix('permission')->controller(PermissionController::class)->group(function () {
-        route::get('', 'index')->name('permission.index');
-        route::get('create', 'create')->name('permission.create');
-        route::post('store', 'store')->name('permission.store');
-        route::get('edit{id}', 'edit')->name('permission.edit');
-        route::put('update/{id}', 'update')->name('permission.update');
-        route::delete('delete/{id}', 'delete')->name('permission.delete');
+        Route::get('',                'index')->name('permission.index');
+        Route::get('create',          'create')->name('permission.create');
+        Route::post('store',          'store')->name('permission.store');
+        Route::get('edit{id}',        'edit')->name('permission.edit');
+        Route::put('update/{id}',     'update')->name('permission.update');
+        Route::delete('delete/{id}',  'delete')->name('permission.delete');
     });
 
-    //module
+    // ── Modules ───────────────────────────────────────────────────
     Route::prefix('module')->controller(ModuleController::class)->group(function () {
-        route::get('', 'index')->name('module.index');
-        route::post('store', 'store')->name('module.store');
-        route::post('update/{id}', 'update')->name('module.update');
-        route::delete('delete/{id}', 'delete')->name('module.delete');
+        Route::get('',                'index')->name('module.index');
+        Route::post('store',          'store')->name('module.store');
+        Route::post('update/{id}',    'update')->name('module.update');
+        Route::delete('delete/{id}',  'delete')->name('module.delete');
     });
 
-    Route::get('/candidat',          [CandidatController::class, 'index'])->name('candidat.index');
-    Route::delete('/candidat/{id}',  [CandidatController::class, 'destroy'])->name('candidat.destroy');
+    // ── Candidats ─────────────────────────────────────────────────
+    Route::get('/candidat',         [CandidatController::class, 'index'])->name('candidat.index');
+    Route::delete('/candidat/{id}', [CandidatController::class, 'destroy'])->name('candidat.destroy');
 });
 
 
+// ── Frontend ──────────────────────────────────────────────────────
 Route::controller(IndexController::class)->group(function () {
-    route::get('/', 'index')->name('index');
+    Route::get('/',            'index')->name('index');
     Route::post('/inscription', 'store')->name('inscription.store');
 });

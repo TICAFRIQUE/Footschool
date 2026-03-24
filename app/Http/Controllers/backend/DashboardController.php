@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\backend;
 
 use App\Http\Controllers\Controller;
+use App\Services\StatsService;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
@@ -76,19 +77,17 @@ class DashboardController extends Controller
 
 
 
+    public function __construct(protected StatsService $statsService) {}
+
+    /**
+     * Affiche le tableau de bord.
+     * Seuls les KPIs sont passés à la vue (rendu SSR).
+     * Les graphiques sont chargés dynamiquement via l'API.
+     */
     public function index()
     {
-        // Récupération de la liste pour le tableau
-        $candidats = \App\Models\Candidat::latest()->get();
+        $stats = $this->statsService->getKpis();
 
-        // Calcul des statistiques pour les widgets
-        $stats = [
-            'total'      => $candidats->count(),
-            'villes'     => $candidats->unique('ville')->count(),
-            'niveaux'    => $candidats->unique('niveau_etudes')->count(),
-            'aujourdhui' => \App\Models\Candidat::whereDate('created_at', today())->count(),
-        ];
-
-        return view('backend.pages.index', compact('stats', 'candidats'));
+        return view('backend.pages.index', compact('stats'));
     }
 }

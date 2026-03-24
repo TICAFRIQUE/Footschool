@@ -3,12 +3,9 @@
 namespace App\Http\Controllers\backend;
 
 use App\Models\User;
-use App\Models\Caisse;
-use App\Models\Setting;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Controller;
-use App\Models\HistoriqueCaisse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
