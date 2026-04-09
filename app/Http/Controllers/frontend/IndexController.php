@@ -50,8 +50,12 @@ class IndexController extends Controller
             'niveau_fr'     => ['nullable', 'in:Débutant,Intermédiaire,Avancé'],
             'niveau_en'     => ['nullable', 'in:Débutant,Intermédiaire,Avancé'],
             'niveau_es'     => ['nullable', 'in:Débutant,Intermédiaire,Avancé'],
+            'pieds_fort'    => ['required', 'in:gauche,droit'],
+            'numero_poste'  => ['required', 'numeric', 'between:1,11'],
             'urgenceNom'    => ['required', 'string', 'max:200'],
             'urgenceTel'    => ['required', 'string', 'min:8', 'max:20'],
+
+
         ]);
 
         // ── 2. NORMALISATION ──────────────────────
@@ -129,6 +133,8 @@ class IndexController extends Controller
             'niveau_fr'      => $validated['niveau_fr'] ?? null,
             'niveau_en'      => $validated['niveau_en'] ?? null,
             'niveau_es'      => $validated['niveau_es'] ?? null,
+            'pieds_fort'     => $validated['pieds_fort'],
+            'numero_poste'   => $validated['numero_poste'],
             'urgence_nom'    => $this->normalizeText($validated['urgenceNom']),
             'urgence_tel'    => $urgenceTel,
         ]);

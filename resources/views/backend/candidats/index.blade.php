@@ -46,7 +46,7 @@
                         <input type="date" id="end_date" class="form-control">
                     </div>
                     
-                    <div class="col-sm-6 col-md-3">
+                    <div class="col-sm-6 col-md-2">
                         <label class="form-label text-muted small fw-bold">VILLE</label>
                         <select id="select_ville" class="form-select">
                             <option value="">Toutes les villes</option>
@@ -63,9 +63,26 @@
                         <label class="form-label text-muted small fw-bold">ÂGE MAX</label>
                         <input type="number" id="max_age" class="form-control" placeholder="22">
                     </div>
-                    <div class="col-md-3 d-grid d-md-flex align-items-end">
+                    <div class="col-sm-6 col-md-2">
+                        <label class="form-label text-muted small fw-bold">PIED FORT</label>
+                        <select id="select_pied" class="form-select">
+                            <option value="">Tous</option>
+                            <option value="gauche">Gauche</option>
+                            <option value="droit">Droit</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-6 col-md-1">
+                        <label class="form-label text-muted small fw-bold">POSTE</label>
+                        <select id="select_poste" class="form-select">
+                            <option value="">Tous</option>
+                            @for($i = 1; $i <= 11; $i++)
+                            <option value="{{ $i }}">#{{ $i }}</option>
+                            @endfor
+                        </select>
+                    </div>
+                    <div class="col-md-1 d-grid d-md-flex align-items-end">
                         <button id="reset_filters" class="btn btn-soft-secondary w-100">
-                            <i class="ri-refresh-line align-bottom me-1"></i> RAZ FILTRES
+                            <i class="ri-refresh-line align-bottom me-1"></i>reset 
                         </button>
                     </div>
                 </div>
@@ -84,6 +101,8 @@
                             <th scope="col">Identité & Contact</th>
                             <th scope="col">Âge</th>
                             <th scope="col">Localisation</th>
+                            <th scope="col">Pied Fort</th>
+                            <th scope="col">Poste</th>
                             <th scope="col">Diplôme</th>
                             <th scope="col">Inscription</th>
                             <th scope="col" class="text-end">Actions</th>
@@ -110,6 +129,20 @@
                             </td>
                             <td><span class="badge bg-info-subtle text-info fs-12 px-2">{{ $item->age }} ans</span></td>
                             <td><i class="ri-map-pin-line text-muted me-1"></i>{{ $item->ville }}</td>
+                            <td>
+                                @if($item->pieds_fort)
+                                    <span class="badge bg-primary-subtle text-primary fs-12 px-2">{{ ucfirst($item->pieds_fort) }}</span>
+                                @else
+                                    <span class="text-muted">-</span>
+                                @endif
+                            </td>
+                            <td>
+                                @if($item->numero_poste)
+                                    <span class="badge bg-warning-subtle text-warning fs-12 px-2 fw-bold">#{{ $item->numero_poste }}</span>
+                                @else
+                                    <span class="text-muted">-</span>
+                                @endif
+                            </td>
                             <td class="fw-medium text-uppercase small">{{ $item->niveau_etudes }}</td>
                             <td class="text-muted small" data-order="{{ $item->created_at->format('Y-m-d') }}">
                                 {{ \Carbon\Carbon::parse($item->created_at)->format('d/m/Y') }}
@@ -179,6 +212,44 @@
                         </div>
                     </div>
                 </div>
+                <div class="row g-4 mt-3">
+                    <div class="col-md-6 border-top pt-4">
+                        <h6 class="text-primary text-uppercase fs-11 fw-bold mb-3">⚽ Caractéristiques Footballistiques</h6>
+                        <div class="row">
+                            <div class="col-6 mb-3">
+                                <p class="text-muted mb-1 small">Pied Fort</p>
+                                <p class="fw-bold">
+                                    @if($item->pieds_fort)
+                                        <span class="badge bg-primary-subtle text-primary">{{ ucfirst($item->pieds_fort) }}</span>
+                                    @else
+                                        <span class="text-muted">-</span>
+                                    @endif
+                                </p>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <p class="text-muted mb-1 small">Numéro de Poste</p>
+                                <p class="fw-bold">
+                                    @if($item->numero_poste)
+                                        <span class="badge bg-warning-subtle text-warning fs-13 fw-bold">#{{ $item->numero_poste }}</span>
+                                    @else
+                                        <span class="text-muted">-</span>
+                                    @endif
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 border-top border-start pt-4 ps-md-4">
+                        <h6 class="text-primary text-uppercase fs-11 fw-bold mb-3">📞 Contact d'Urgence</h6>
+                        <div class="mb-3">
+                            <p class="text-muted mb-1 small">Nom &amp; Prénoms</p>
+                            <p class="fw-medium">{{ $item->urgence_nom }}</p>
+                        </div>
+                        <div class="mb-3">
+                            <p class="text-muted mb-1 small">Téléphone</p>
+                            <p class="fw-medium"><i class="ri-phone-fill me-1"></i>{{ $item->urgence_tel }}</p>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="modal-footer bg-light p-3">
                 <button type="button" class="btn btn-ghost-dark" data-bs-dismiss="modal">Fermer</button>
@@ -212,19 +283,19 @@
             "language": { "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/French.json" },
             dom: '<"row align-items-center"<"col-sm-12 col-md-auto"B><"col-sm-12 col-md"f>>rt<"row align-items-center"<"col-sm-12 col-md"i><"col-sm-12 col-md-auto"p>>',
             buttons: [
-                { extend: 'excelHtml5', text: '<i class="ri-file-excel-line"></i> Excel', className: 'btn btn-success btn-export', exportOptions: { columns: [0, 1, 2, 3, 4, 5] } },
-                { extend: 'pdfHtml5', text: '<i class="ri-file-pdf-line"></i> PDF', className: 'btn btn-danger btn-export', exportOptions: { columns: [0, 1, 2, 3, 4, 5] },
+                { extend: 'excelHtml5', text: '<i class="ri-file-excel-line"></i> Excel', className: 'btn btn-success btn-export', exportOptions: { columns: [0, 1, 2, 3, 4, 5, 6, 7] } },
+                { extend: 'pdfHtml5', text: '<i class="ri-file-pdf-line"></i> PDF', className: 'btn btn-danger btn-export', exportOptions: { columns: [0, 1, 2, 3, 4, 5, 6, 7] },
                     customize: function(doc) {
                         doc.styles.tableHeader.fillColor = '#405189';
                         doc.styles.tableHeader.color = 'white';
-                        doc.content[1].table.widths = ['5%', '35%', '10%', '15%', '20%', '15%'];
+                        doc.content[1].table.widths = ['5%', '25%', '8%', '12%', '10%', '8%', '18%', '14%'];
                     }
                 },
-                { extend: 'print', text: '<i class="ri-printer-line"></i> Imprimer', className: 'btn btn-info btn-export', exportOptions: { columns: [0, 1, 2, 3, 4, 5] } }
+                { extend: 'print', text: '<i class="ri-printer-line"></i> Imprimer', className: 'btn btn-info btn-export', exportOptions: { columns: [0, 1, 2, 3, 4, 5, 6, 7] } }
             ]
         });
 
-        // Fonction de filtrage combinée (Âge + Dates)
+        // Fonction de filtrage combinée (Âge + Dates + Pied + Poste)
         $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
             // Filtre Age
             var minA = parseInt($('#min_age').val(), 10);
@@ -234,9 +305,16 @@
             // Filtre Date d'inscription
             var start = $('#start_date').val();
             var end = $('#end_date').val();
-            var dateOrder = $(table.row(dataIndex).node()).find('td:eq(5)').attr('data-order');
+            var dateOrder = $(table.row(dataIndex).node()).find('td:eq(7)').attr('data-order');
 
-            // Logique Age
+            // Filtre Pied Fort (colonne 4)
+            var piedFilter = $('#select_pied').val();
+            var piedCell = $(table.row(dataIndex).node()).find('td:eq(4)').text().toLowerCase();
+
+            // Filtre Poste (colonne 5)
+            var posteFilter = $('#select_poste').val();
+            var posteCell = $(table.row(dataIndex).node()).find('td:eq(5)').text().trim();
+            var posteMatch = !posteFilter || posteCell.includes('#' + posteFilter);
             var ageMatch = (isNaN(minA) && isNaN(maxA)) || (isNaN(minA) && age <= maxA) || (minA <= age && isNaN(maxA)) || (minA <= age && age <= maxA);
             
             // Logique Date
@@ -244,15 +322,22 @@
             if (start && dateOrder < start) dateMatch = false;
             if (end && dateOrder > end) dateMatch = false;
 
-            return ageMatch && dateMatch;
+            // Logique Pied
+            var piedMatch = !piedFilter || piedCell.includes(piedFilter);
+
+            // Logique Poste
+            var posteMatch = !posteFilter || posteCell.includes(posteFilter);
+
+            return ageMatch && dateMatch && piedMatch && posteMatch;
         });
 
         // Listeners
         $('#min_age, #max_age, #start_date, #end_date').on('change keyup', function() { table.draw(); });
         $('#select_ville').on('change', function() { table.column(3).search(this.value).draw(); });
+        $('#select_pied, #select_poste').on('change keyup', function() { table.draw(); });
 
         $('#reset_filters').on('click', function() {
-            $('#min_age, #max_age, #start_date, #end_date, #select_ville').val('');
+            $('#min_age, #max_age, #start_date, #end_date, #select_ville, #select_pied, #select_poste').val('');
             table.search('').column(3).draw();
         });
 

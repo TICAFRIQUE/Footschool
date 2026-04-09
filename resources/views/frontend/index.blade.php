@@ -1032,6 +1032,34 @@
                 </div>
               </div>
 
+              <!-- PIEDS FORTS & NUMÉRO DE POSTE -->
+              <p class="form-section-title">⚽ Caractéristiques Footballistiques</p>
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <div class="field-wrap" id="wrap-pieds-fort">
+                    <label class="form-label">Pied fort <span class="required-star">*</span></label>
+                    <div style="display: flex; gap: 10px;">
+                      <div class="lang-btn">
+                        <input type="radio" name="pieds_fort" id="pied-gauche" value="gauche" />
+                        <label for="pied-gauche">Gauche</label>
+                      </div>
+                      <div class="lang-btn">
+                        <input type="radio" name="pieds_fort" id="pied-droit" value="droit" />
+                        <label for="pied-droit">Droit</label>
+                      </div>
+                    </div>
+                    <div class="invalid-msg">Veuillez sélectionner votre pied fort.</div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="field-wrap" id="wrap-numero-poste">
+                    <label class="form-label" for="numeroPoste">Numéro de poste <span class="required-star">*</span></label>
+                    <input type="number" class="form-control" id="numeroPoste" name="numero_poste" placeholder="Ex : 10" min="1" max="11" />
+                    <div class="invalid-msg">Veuillez entrer un numéro entre 1 et 11.</div>
+                  </div>
+                </div>
+              </div>
+
               <!-- CONTACT D'URGENCE -->
               <p class="form-section-title">📞 Contact d'Urgence</p>
               <div class="row g-3">
@@ -1105,6 +1133,25 @@
     </div>
   </div>
 
+  <!-- ============================================================
+     VIDEO OVERLAY
+============================================================ -->
+  <div id="video-overlay">
+    <div id="video-box">
+      <button id="video-close" aria-label="Fermer la vidéo">✕</button>
+      <video id="promo-video" playsinline>
+        <!-- Remplace src par l'URL de ta vidéo, ex: src="assets/videos/promo.mp4" -->
+        <source src="assets/videos/promo.mp4" type="video/mp4" />
+        Votre navigateur ne supporte pas la lecture vidéo.
+      </video>
+      <!-- Affiché si le navigateur bloque l'autoplay avec son -->
+      <div id="video-unblock">
+        <button id="video-unmute-btn">
+          🔊 Activer le son et lancer la vidéo
+        </button>
+      </div>
+    </div>
+  </div>
   <style>
     .floating-contact {
       position: fixed;
@@ -1149,6 +1196,136 @@
     .floating-contact:hover::after {
       opacity: 1;
     }
+
+    /* VIDEO OVERLAY */
+    #video-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 3000;
+      background: rgba(0, 0, 0, 0.82);
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(4px);
+      animation: fadeIn 0.4s ease both;
+    }
+
+    #video-overlay.active {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    #video-box {
+      position: relative;
+      width: min(720px, 92vw);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 32px 80px rgba(0, 0, 0, 0.7);
+      background: #000;
+      animation: popIn 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+    }
+
+    @keyframes popIn {
+      from {
+        opacity: 0;
+        transform: scale(0.82);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    #promo-video {
+      display: block;
+      width: 100%;
+      max-height: 82vh;
+      object-fit: contain;
+      background: #000;
+    }
+
+    /* Bouton fermer */
+    #video-close {
+      position: absolute;
+      top: 12px;
+      right: 14px;
+      z-index: 10;
+      background: rgba(0, 0, 0, 0.65);
+      color: #fff;
+      border: 1.5px solid rgba(255, 255, 255, 0.25);
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      font-size: 1rem;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s, transform 0.15s;
+    }
+
+    #video-close:hover {
+      background: rgba(220, 53, 69, 0.85);
+      transform: scale(1.1);
+    }
+
+    /* Fallback bouton son */
+    #video-unblock {
+      display: none;
+      position: absolute;
+      inset: 0;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.01);
+    }
+
+    #video-unblock.visible {
+      display: flex;
+    }
+
+    #video-unmute-btn {
+      background: var(--orange);
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      padding: 14px 30px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 1.05rem;
+      letter-spacing: 0.06em;
+      cursor: pointer;
+      box-shadow: 0 8px 28px rgba(244, 124, 32, 0.4);
+      transition: transform 0.15s, box-shadow 0.15s;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    #video-unmute-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 12px 36px rgba(244, 124, 32, 0.55);
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        box-shadow: 0 8px 28px rgba(244, 124, 32, 0.4);
+      }
+
+      50% {
+        box-shadow: 0 8px 40px rgba(244, 124, 32, 0.7);
+      }
+    }
   </style>
 
   <a href="mailto:info@schoolfoot.ci" class="floating-contact">
@@ -1157,7 +1334,6 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
   <script>
-
     let captchaAnswer = null;
 
     function generateCaptcha() {
@@ -1259,7 +1435,7 @@
       const ageMsg = document.getElementById("dob-age-msg");
       if (jour && mois && annee) {
         const age = calcAge();
-        if (age === null || age < 17 || age > 22) {
+        if (age === null || age < 17 || age >= 22) {
           ageMsg.style.display = "block";
           setError("wrap-annee", true);
           valid = false;
@@ -1284,6 +1460,15 @@
       const langues = getChecked("langues[]");
       setLanguesError(langues.length === 0);
       if (langues.length === 0) valid = false;
+
+      const piedsFort = getChecked("pieds_fort");
+      setError("wrap-pieds-fort", piedsFort.length === 0);
+      if (piedsFort.length === 0) valid = false;
+
+      const numeroPoste = document.getElementById("numeroPoste").value.trim();
+      const numeroPosteValid = numeroPoste && !isNaN(numeroPoste) && numeroPoste >= 1 && numeroPoste <= 11;
+      setError("wrap-numero-poste", !numeroPosteValid);
+      if (!numeroPosteValid) valid = false;
 
       const urgenceNom = document.getElementById("urgenceNom").value.trim();
       setError("wrap-urgence-nom", !urgenceNom);
@@ -1366,6 +1551,8 @@
             candidatTel: "wrap-candidat-tel",
             ville: "wrap-ville",
             niveau: "wrap-niveau",
+            pieds_fort: "wrap-pieds-fort",
+            numero_poste: "wrap-numero-poste",
             urgenceNom: "wrap-urgence-nom",
             urgenceTel: "wrap-urgence-tel",
           };
@@ -1453,6 +1640,67 @@
         });
       });
     });
+    /* ======================================================
+     VIDEO OVERLAY — autoplay avec son, fallback bouton
+  ====================================================== */
+    (function() {
+      const overlay = document.getElementById('video-overlay');
+      const video = document.getElementById('promo-video');
+      const closeBtn = document.getElementById('video-close');
+      const unblock = document.getElementById('video-unblock');
+      const unmuteBtn = document.getElementById('video-unmute-btn');
+
+      /* Ouvre l'overlay et tente l'autoplay avec son */
+      function openOverlay() {
+        overlay.classList.add('active');
+        video.muted = false;
+        video.currentTime = 0;
+
+        const playPromise = video.play();
+
+        if (playPromise !== undefined) {
+          playPromise.catch(function() {
+            /* Le navigateur a bloqué l'autoplay avec son → affiche le bouton */
+            unblock.classList.add('visible');
+          });
+        }
+      }
+
+      /* Ferme l'overlay et stoppe la vidéo */
+      function closeOverlay() {
+        video.pause();
+        video.currentTime = 0;
+        overlay.classList.remove('active');
+        unblock.classList.remove('visible');
+      }
+
+      /* Déclenche 5 secondes après le chargement */
+      setTimeout(openOverlay, 5000);
+
+      /* Bouton Fermer */
+      closeBtn.addEventListener('click', closeOverlay);
+
+      /* Clic sur le fond sombre = fermer */
+      overlay.addEventListener('click', function(e) {
+        if (e.target === overlay) closeOverlay();
+      });
+
+      /* Touche Échap = fermer */
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') closeOverlay();
+      });
+
+      /* Bouton "Activer le son" */
+      unmuteBtn.addEventListener('click', function() {
+        video.muted = false;
+        video.currentTime = 0;
+        video.play();
+        unblock.classList.remove('visible');
+      });
+
+      /* Ferme automatiquement quand la vidéo se termine */
+      video.addEventListener('ended', closeOverlay);
+    })();
   </script>
 
 </body>

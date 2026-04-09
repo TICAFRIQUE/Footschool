@@ -24,11 +24,16 @@ class Candidat extends Model
         'niveau_es',
         'urgence_nom',
         'urgence_tel',
+        'pieds_fort', // 'gauche' ou 'droit'
+        'numero_poste'
+
     ];
 
     protected $casts = [
         'date_naissance' => 'date',
         'langues'        => 'array',
+        'pieds_fort'     => 'string',
+        'numero_poste'   => 'integer',
     ];
 
     /**
