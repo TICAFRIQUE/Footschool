@@ -87,6 +87,13 @@
                         <span>CANDIDATS</span>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link menu-link {{ Route::is('inscriptions.*') ? 'active' : '' }}"
+                        href="{{ route('inscriptions.index') }}">
+                        <i class="ri-file-list-3-line"></i>
+                        <span>INSCRIPTIONS</span>
+                    </a>
+                </li>
                 @endcan
 
                 @if (Auth::user()->role == 'superadmin' || Auth::user()->role == 'developpeur' || Auth::user()->can('voir-parametre'))
@@ -94,7 +101,7 @@
                     <a class="nav-link menu-link" href="#sidebarAuth" data-bs-toggle="collapse"
                         role="button" aria-expanded="false" aria-controls="sidebarAuth">
                         <i class="ri-settings-2-fill me-2"></i>
-                        <span>Paramètres</span>
+                        <span class="text-uppercase">Paramètres</span>
                     </a>
                     <div class="collapse menu-dropdown {{ Route::is('role.*') || Route::is('parametre.*') || Route::is('module.*') || Route::is('permission.*') || Route::is('admin-register.*') ? 'show' : '' }}"
                         id="sidebarAuth">

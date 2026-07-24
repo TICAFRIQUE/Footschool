@@ -19,10 +19,11 @@
     .table-card tbody td { vertical-align: middle; padding: 0.75rem 0.6rem; }
     .dt-buttons { margin-bottom: 15px; display: flex; gap: 8px; flex-wrap: wrap; }
     .btn-export { border-radius: 4px !important; font-weight: 600; font-size: 12px; }
-    .avatar-soft-primary { background-color: rgba(64, 81, 137, 0.1); color: #405189; }
     .filter-card { border-top: 3px solid #405189; }
     .modal-header-gradient { background: linear-gradient(to right, #405189, #0ab39c); color: white; }
     table.dataTable.dtr-inline.collapsed>tbody>tr>td.dtr-control:before { background-color: #405189 !important; }
+    /* Le menu d'actions doit toujours passer au-dessus de la sidebar, même sur un tableau large/scrollable */
+    .table-card .dropdown-menu { z-index: 1055; }
 </style>
 @endsection
 
@@ -38,19 +39,19 @@
             <div class="card-body">
                 <div class="row g-3">
                     <div class="col-sm-6 col-md-2">
-                        <label class="form-label text-muted small fw-bold">INSCRIPTION DU</label>
+                        <label class="form-label text-muted small fw-bold">PRÉINSCRIPTION DU</label>
                         <input type="date" id="start_date" class="form-control">
                     </div>
                     <div class="col-sm-6 col-md-2">
                         <label class="form-label text-muted small fw-bold">AU</label>
                         <input type="date" id="end_date" class="form-control">
                     </div>
-                    
+
                     <div class="col-sm-6 col-md-2">
                         <label class="form-label text-muted small fw-bold">VILLE</label>
                         <select id="select_ville" class="form-select">
                             <option value="">Toutes les villes</option>
-                            @foreach($candidats->pluck('ville')->unique() as $ville)
+                            @foreach($candidats->pluck('ville')->unique()->filter() as $ville)
                             <option value="{{ $ville }}">{{ $ville }}</option>
                             @endforeach
                         </select>
@@ -69,6 +70,7 @@
                             <option value="">Tous</option>
                             <option value="gauche">Gauche</option>
                             <option value="droit">Droit</option>
+                            <option value="les deux">Les deux</option>
                         </select>
                     </div>
                     <div class="col-sm-6 col-md-1">
@@ -80,9 +82,18 @@
                             @endfor
                         </select>
                     </div>
+                    <div class="col-sm-6 col-md-1">
+                        <label class="form-label text-muted small fw-bold">STATUT</label>
+                        <select id="select_statut" class="form-select">
+                            <option value="">Tous</option>
+                            <option value="Préinscrit">Préinscrit</option>
+                            <option value="En attente paiement">En attente</option>
+                            <option value="Inscrit">Inscrit</option>
+                        </select>
+                    </div>
                     <div class="col-md-1 d-grid d-md-flex align-items-end">
                         <button id="reset_filters" class="btn btn-soft-secondary w-100">
-                            <i class="ri-refresh-line align-bottom me-1"></i>reset 
+                            <i class="ri-refresh-line align-bottom me-1"></i>reset
                         </button>
                     </div>
                 </div>
@@ -98,35 +109,43 @@
                     <thead>
                         <tr>
                             <th scope="col">#</th>
-                            <th scope="col">Identité & Contact</th>
+                            <th scope="col">Nom</th>
+                            <th scope="col">Prénom</th>
+                            <th scope="col">Téléphone</th>
                             <th scope="col">Âge</th>
-                            <th scope="col">Localisation</th>
+                            <th scope="col">Ville</th>
                             <th scope="col">Pied Fort</th>
                             <th scope="col">Poste</th>
                             <th scope="col">Diplôme</th>
-                            <th scope="col">Inscription</th>
+                            <th scope="col">Statut</th>
+                            <th scope="col">Préinscription</th>
                             <th scope="col" class="text-end">Actions</th>
+                            {{-- Colonnes cachées : présentes uniquement pour l'export complet --}}
+                            <th scope="col">Date de naissance</th>
+                            <th scope="col">Lieu de naissance</th>
+                            <th scope="col">Langues</th>
+                            <th scope="col">Niveau Français</th>
+                            <th scope="col">Niveau Anglais</th>
+                            <th scope="col">Niveau Espagnol</th>
+                            <th scope="col">Contact urgence</th>
+                            <th scope="col">N° Dossier</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($candidats as $key => $item)
+                        @php
+                            $statutMap = [
+                                'preinscrit' => ['Préinscrit', 'secondary'],
+                                'en_attente_paiement' => ['En attente paiement', 'warning'],
+                                'inscrit' => ['Inscrit', 'success'],
+                            ];
+                            [$statutLabel, $statutColor] = $statutMap[$item->statut] ?? ['Préinscrit', 'secondary'];
+                        @endphp
                         <tr id="row_{{ $item->id }}">
                             <td><span class="text-muted fw-bold">{{ ++$key }}</span></td>
-                            <td>
-                                <div class="d-flex align-items-center">
-                                    <div class="flex-shrink-0 me-3">
-                                        <div class="avatar-xs">
-                                            <div class="avatar-title rounded-circle avatar-soft-primary fw-bold">
-                                                {{ strtoupper(substr($item->nom, 0, 1)) }}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="flex-grow-1">
-                                        <h6 class="fs-14 mb-0 text-dark">{{ strtoupper($item->nom) }} {{ $item->prenom }}</h6>
-                                        <p class="text-muted mb-0 small"><i class="ri-phone-fill me-1"></i>{{ $item->telephone }}</p>
-                                    </div>
-                                </div>
-                            </td>
+                            <td class="fw-semibold text-uppercase">{{ $item->nom }}</td>
+                            <td class="fw-medium">{{ $item->prenom }}</td>
+                            <td><i class="ri-phone-fill text-muted me-1"></i>{{ $item->telephone }}</td>
                             <td><span class="badge bg-info-subtle text-info fs-12 px-2">{{ $item->age }} ans</span></td>
                             <td><i class="ri-map-pin-line text-muted me-1"></i>{{ $item->ville }}</td>
                             <td>
@@ -144,18 +163,26 @@
                                 @endif
                             </td>
                             <td class="fw-medium text-uppercase small">{{ $item->niveau_etudes }}</td>
+                            <td>
+                                <span class="badge bg-{{ $statutColor }}-subtle text-{{ $statutColor }} fs-12 px-2">{{ $statutLabel }}</span>
+                            </td>
                             <td class="text-muted small" data-order="{{ $item->created_at->format('Y-m-d') }}">
                                 {{ \Carbon\Carbon::parse($item->created_at)->format('d/m/Y') }}
                             </td>
                             <td class="text-end">
                                 <div class="dropdown">
-                                    <button class="btn btn-soft-secondary btn-sm" data-bs-toggle="dropdown">
+                                    <button class="btn btn-soft-secondary btn-sm" data-bs-toggle="dropdown" data-bs-strategy="fixed">
                                         <i class="ri-more-2-fill"></i>
                                     </button>
                                     <ul class="dropdown-menu dropdown-menu-end shadow">
                                         <li>
                                             <a class="dropdown-item" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#modalDetail{{ $item->id }}">
                                                 <i class="ri-eye-fill me-2 align-bottom text-muted"></i> Fiche Profil
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="{{ route('candidat.fiche', $item->id) }}" target="_blank">
+                                                <i class="ri-printer-fill me-2 align-bottom text-muted"></i> Imprimer la fiche
                                             </a>
                                         </li>
                                         <li><hr class="dropdown-divider"></li>
@@ -167,6 +194,15 @@
                                     </ul>
                                 </div>
                             </td>
+                            {{-- Colonnes cachées (export) --}}
+                            <td>{{ \Carbon\Carbon::parse($item->date_naissance)->format('d/m/Y') }}</td>
+                            <td>{{ $item->lieu_naissance }}</td>
+                            <td>{{ $item->langues ? implode(', ', $item->langues) : '-' }}</td>
+                            <td>{{ $item->niveau_fr ?? '-' }}</td>
+                            <td>{{ $item->niveau_en ?? '-' }}</td>
+                            <td>{{ $item->niveau_es ?? '-' }}</td>
+                            <td>{{ $item->urgence_nom }} ({{ $item->urgence_tel }})</td>
+                            <td>{{ $item->numero_dossier ?? '-' }}</td>
                         </tr>
                         @endforeach
                     </tbody>
@@ -253,6 +289,9 @@
             </div>
             <div class="modal-footer bg-light p-3">
                 <button type="button" class="btn btn-ghost-dark" data-bs-dismiss="modal">Fermer</button>
+                <a href="{{ route('candidat.fiche', $item->id) }}" target="_blank" class="btn btn-outline-secondary shadow-sm px-3">
+                    <i class="ri-printer-line me-1 align-bottom"></i> Fiche PDF
+                </a>
                 <a href="tel:{{ $item->telephone }}" class="btn btn-primary shadow-sm px-4">
                     <i class="ri-phone-line me-1 align-bottom"></i> Contacter
                 </a>
@@ -277,68 +316,82 @@
 
 <script>
     $(document).ready(function() {
-        // Initialisation avec tes boutons d'export d'origine
+        // Colonnes cachées (12 à 19) : uniquement pour l'export complet, jamais affichées à l'écran
+        var HIDDEN_COLS = [12, 13, 14, 15, 16, 17, 18, 19];
+        var EXPORT_COLS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].concat(HIDDEN_COLS);
+
         var table = $('#candidats-datatable').DataTable({
             responsive: true,
             "language": { "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/French.json" },
+            columnDefs: [
+                { targets: HIDDEN_COLS, visible: false },
+                // La colonne Actions (et #, Nom, Téléphone) ne doit jamais être repliée dans la
+                // ligne responsive : sinon son bouton se retrouve aligné à gauche, collé à la
+                // sidebar, et son menu "dropdown-menu-end" s'ouvre par-dessus elle.
+                { targets: 11, responsivePriority: 1 },
+                { targets: 0, responsivePriority: 1 },
+                { targets: [1, 3], responsivePriority: 2 }
+            ],
             dom: '<"row align-items-center"<"col-sm-12 col-md-auto"B><"col-sm-12 col-md"f>>rt<"row align-items-center"<"col-sm-12 col-md"i><"col-sm-12 col-md-auto"p>>',
             buttons: [
-                { extend: 'excelHtml5', text: '<i class="ri-file-excel-line"></i> Excel', className: 'btn btn-success btn-export', exportOptions: { columns: [0, 1, 2, 3, 4, 5, 6, 7] } },
-                { extend: 'pdfHtml5', text: '<i class="ri-file-pdf-line"></i> PDF', className: 'btn btn-danger btn-export', exportOptions: { columns: [0, 1, 2, 3, 4, 5, 6, 7] },
+                { extend: 'excelHtml5', text: '<i class="ri-file-excel-line"></i> Excel', className: 'btn btn-success btn-export', exportOptions: { columns: EXPORT_COLS } },
+                { extend: 'pdfHtml5', text: '<i class="ri-file-pdf-line"></i> PDF', className: 'btn btn-danger btn-export', exportOptions: { columns: EXPORT_COLS },
                     customize: function(doc) {
                         doc.styles.tableHeader.fillColor = '#405189';
                         doc.styles.tableHeader.color = 'white';
-                        doc.content[1].table.widths = ['5%', '25%', '8%', '12%', '10%', '8%', '18%', '14%'];
+                        doc.pageOrientation = 'landscape';
+                        doc.defaultStyle.fontSize = 7;
                     }
                 },
-                { extend: 'print', text: '<i class="ri-printer-line"></i> Imprimer', className: 'btn btn-info btn-export', exportOptions: { columns: [0, 1, 2, 3, 4, 5, 6, 7] } }
+                { extend: 'print', text: '<i class="ri-printer-line"></i> Imprimer', className: 'btn btn-info btn-export', exportOptions: { columns: EXPORT_COLS } }
             ]
         });
 
-        // Fonction de filtrage combinée (Âge + Dates + Pied + Poste)
+        // Fonction de filtrage combinée (Âge + Dates + Pied + Poste + Statut)
         $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
-            // Filtre Age
+            // Filtre Age (colonne 4)
             var minA = parseInt($('#min_age').val(), 10);
             var maxA = parseInt($('#max_age').val(), 10);
-            var age = parseFloat(data[2]) || 0; // Colonne Age
+            var age = parseFloat(data[4]) || 0;
 
-            // Filtre Date d'inscription
+            // Filtre Date de préinscription (colonne 10)
             var start = $('#start_date').val();
             var end = $('#end_date').val();
-            var dateOrder = $(table.row(dataIndex).node()).find('td:eq(7)').attr('data-order');
+            var dateOrder = $(table.row(dataIndex).node()).find('td:eq(10)').attr('data-order');
 
-            // Filtre Pied Fort (colonne 4)
+            // Filtre Pied Fort (colonne 6)
             var piedFilter = $('#select_pied').val();
-            var piedCell = $(table.row(dataIndex).node()).find('td:eq(4)').text().toLowerCase();
+            var piedCell = $(table.row(dataIndex).node()).find('td:eq(6)').text().toLowerCase();
 
-            // Filtre Poste (colonne 5)
+            // Filtre Poste (colonne 7)
             var posteFilter = $('#select_poste').val();
-            var posteCell = $(table.row(dataIndex).node()).find('td:eq(5)').text().trim();
-            var posteMatch = !posteFilter || posteCell.includes('#' + posteFilter);
+            var posteCell = $(table.row(dataIndex).node()).find('td:eq(7)').text().trim();
+
+            // Filtre Statut (colonne 9)
+            var statutFilter = $('#select_statut').val();
+            var statutCell = $(table.row(dataIndex).node()).find('td:eq(9)').text().trim();
+
             var ageMatch = (isNaN(minA) && isNaN(maxA)) || (isNaN(minA) && age <= maxA) || (minA <= age && isNaN(maxA)) || (minA <= age && age <= maxA);
-            
-            // Logique Date
+
             var dateMatch = true;
-            if (start && dateOrder < start) dateMatch = false;
-            if (end && dateOrder > end) dateMatch = false;
+            if (start && (!dateOrder || dateOrder < start)) dateMatch = false;
+            if (end && (!dateOrder || dateOrder > end)) dateMatch = false;
 
-            // Logique Pied
             var piedMatch = !piedFilter || piedCell.includes(piedFilter);
+            var posteMatch = !posteFilter || posteCell.includes('#' + posteFilter);
+            var statutMatch = !statutFilter || statutCell === statutFilter;
 
-            // Logique Poste
-            var posteMatch = !posteFilter || posteCell.includes(posteFilter);
-
-            return ageMatch && dateMatch && piedMatch && posteMatch;
+            return ageMatch && dateMatch && piedMatch && posteMatch && statutMatch;
         });
 
         // Listeners
         $('#min_age, #max_age, #start_date, #end_date').on('change keyup', function() { table.draw(); });
-        $('#select_ville').on('change', function() { table.column(3).search(this.value).draw(); });
-        $('#select_pied, #select_poste').on('change keyup', function() { table.draw(); });
+        $('#select_ville').on('change', function() { table.column(5).search(this.value).draw(); });
+        $('#select_pied, #select_poste, #select_statut').on('change keyup', function() { table.draw(); });
 
         $('#reset_filters').on('click', function() {
-            $('#min_age, #max_age, #start_date, #end_date, #select_ville, #select_pied, #select_poste').val('');
-            table.search('').column(3).draw();
+            $('#min_age, #max_age, #start_date, #end_date, #select_ville, #select_pied, #select_poste, #select_statut').val('');
+            table.search('').column(5).search('').draw();
         });
 
         // Ajax Delete (conservé)

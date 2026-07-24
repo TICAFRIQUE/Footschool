@@ -17,12 +17,14 @@ class StatsService
     {
         return Cache::remember("dashboard.all_stats.{$days}", $this->cacheTtl, function () use ($days) {
             return [
-                'kpis'                => $this->getKpis(),
-                'daily_registrations' => $this->getDailyRegistrations($days),
-                'city_distribution'   => $this->getCityDistribution(),
-                'education_levels'    => $this->getEducationLevels(),
-                'age_distribution'    => $this->getAgeDistribution(),
-                'recent_activity'     => $this->getRecentActivity(8),
+                'kpis'                  => $this->getKpis(),
+                'daily_registrations'   => $this->getDailyRegistrations($days),
+                'city_distribution'     => $this->getCityDistribution(),
+                'education_levels'      => $this->getEducationLevels(),
+                'age_distribution'      => $this->getAgeDistribution(),
+                'position_distribution' => $this->getPositionDistribution(),
+                'foot_distribution'     => $this->getFootDistribution(),
+                'recent_activity'       => $this->getRecentActivity(8),
             ];
         });
     }
@@ -129,6 +131,55 @@ class StatsService
     }
 
     /**
+     * Répartition des numéros de poste (1 à 11).
+     */
+    public function getPositionDistribution(): array
+    {
+        return Cache::remember('dashboard.positions', $this->cacheTtl, function () {
+            $counts = Candidat::select('numero_poste', DB::raw('COUNT(*) as total'))
+                ->whereNotNull('numero_poste')
+                ->groupBy('numero_poste')
+                ->orderBy('numero_poste')
+                ->pluck('total', 'numero_poste')
+                ->toArray();
+
+            $labels = [];
+            $series = [];
+            for ($i = 1; $i <= 11; $i++) {
+                $labels[] = (string) $i;
+                $series[] = isset($counts[$i]) ? (int) $counts[$i] : 0;
+            }
+
+            return compact('labels', 'series');
+        });
+    }
+
+    /**
+     * Répartition par pied fort.
+     */
+    public function getFootDistribution(): array
+    {
+        return Cache::remember('dashboard.feet', $this->cacheTtl, function () {
+            $order = ['gauche' => 'Gauche', 'droit' => 'Droit', 'les deux' => 'Les deux'];
+            $counts = Candidat::select('pieds_fort', DB::raw('COUNT(*) as total'))
+                ->whereNotNull('pieds_fort')
+                ->where('pieds_fort', '!=', '')
+                ->groupBy('pieds_fort')
+                ->pluck('total', 'pieds_fort')
+                ->toArray();
+
+            $labels = [];
+            $series = [];
+            foreach ($order as $key => $label) {
+                $labels[] = $label;
+                $series[] = isset($counts[$key]) ? (int) $counts[$key] : 0;
+            }
+
+            return compact('labels', 'series');
+        });
+    }
+
+    /**
      * Derniers candidats inscrits (cache court : 1 min).
      */
     public function getRecentActivity(int $limit = 8): array
@@ -197,7 +248,7 @@ class StatsService
             Cache::forget("dashboard.all_stats.{$d}");
             Cache::forget("dashboard.daily.{$d}");
         }
-        foreach (['kpis', 'cities', 'education', 'ages', 'recent.8'] as $k) {
+        foreach (['kpis', 'cities', 'education', 'ages', 'positions', 'feet', 'recent.8'] as $k) {
             Cache::forget("dashboard.{$k}");
         }
     }

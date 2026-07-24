@@ -411,6 +411,12 @@
         color: var(--d-purple);
     }
 
+    .d-table-body {
+        min-height: 180px;
+        overflow-x: auto;
+        overflow-y: auto;
+    }
+
     .d-table {
         width: 100%;
         border-collapse: collapse;
@@ -431,7 +437,7 @@
     }
 
     .d-table td {
-        padding: 12px 18px;
+        padding: 14px 18px;
         font-size: 13px;
         color: var(--d-text);
         /* ← scoped : JAMAIS blanc en mode clair */
@@ -445,31 +451,35 @@
 
     .d-table tbody tr:hover {
         background: var(--d-bg1);
+        transition: background 0.2s ease;
     }
 
     .d-avatar {
-        width: 30px;
-        height: 30px;
+        width: 32px;
+        height: 32px;
+        min-width: 32px;
         border-radius: 50%;
         background: linear-gradient(135deg, var(--d-brand), var(--d-purple));
         color: #fff;
-        font-size: 10.5px;
+        font-size: 11px;
         font-weight: 700;
         display: inline-flex;
         align-items: center;
         justify-content: center;
         flex-shrink: 0;
-        margin-right: 9px;
+        margin-right: 10px;
+        box-shadow: var(--d-sh1);
     }
 
     .d-niveau {
         display: inline-block;
-        font-size: 10.5px;
+        font-size: 11px;
         font-weight: 600;
-        padding: 3px 9px;
+        padding: 4px 11px;
         border-radius: 999px;
         background: var(--d-bg2);
         color: var(--d-text2);
+        border: 1px solid var(--d-border);
     }
 
     /* ══ BOTTOM NAV ══════════════════════════════════════════════ */
@@ -781,40 +791,75 @@
 
     </div>
 
-    {{-- ══════════ TABLE ════════════════════════════════════ --}}
-    <div class="d-table-wrap">
-        <div class="d-table-head">
-            <div>
-                <p class="d-card-title">Dernières inscriptions</p>
-                <p class="d-card-sub">8 candidats les plus récents</p>
+    {{-- ══════════ POSTES + PIEDS FORTS ═══════════════════ --}}
+    <div class="d-grid-6-6">
+
+        <div class="d-card">
+            <div class="d-card-header">
+                <div>
+                    <p class="d-card-title">Postes préférés</p>
+                    <p class="d-card-sub">Répartition par numéro de poste</p>
+                </div>
             </div>
-            <a href="{{ route('candidat.index') }}" class="d-table-link">
-                Voir tout <i class="ri-arrow-right-line"></i>
-            </a>
+            <div class="d-card-body">
+                <div id="wrapPoste" class="d-chart-shell d-skel">
+                    <div id="chartPoste"></div>
+                </div>
+            </div>
         </div>
-        <div style="overflow-x:auto">
-            <table class="d-table">
-                <thead>
-                    <tr>
-                        <th>Candidat</th>
-                        <th>Ville</th>
-                        <th>Niveau</th>
-                        <th>Date</th>
-                    </tr>
-                </thead>
-                <tbody id="recentBody">
-                    @for($i = 0; $i < 5; $i++)
-                        <tr>
-                        <td><span class="d-skel" style="display:inline-block;width:150px;height:13px;border-radius:4px"></span></td>
-                        <td><span class="d-skel" style="display:inline-block;width:80px;height:13px;border-radius:4px"></span></td>
-                        <td><span class="d-skel" style="display:inline-block;width:90px;height:13px;border-radius:4px"></span></td>
-                        <td><span class="d-skel" style="display:inline-block;width:70px;height:13px;border-radius:4px"></span></td>
-                        </tr>
-                        @endfor
-                </tbody>
-            </table>
+
+        <div class="d-card">
+            <div class="d-card-header">
+                <div>
+                    <p class="d-card-title">Pieds forts</p>
+                    <p class="d-card-sub">Répartition des préférences de pied</p>
+                </div>
+            </div>
+            <div class="d-card-body">
+                <div id="wrapPied" class="d-chart-shell d-skel">
+                    <div id="chartPied"></div>
+                </div>
+            </div>
         </div>
+
     </div>
+
+</div>
+
+{{-- ══════════ TABLE ════════════════════════════════════ --}}
+<div class="d-table-wrap bg-white">
+    <div class="d-table-head">
+        <div>
+            <p class="d-card-title">Dernières inscriptions</p>
+            <p class="d-card-sub">8 candidats les plus récents</p>
+        </div>
+        <a href="{{ route('candidat.index') }}" class="d-table-link">
+            Voir tout <i class="ri-arrow-right-line"></i>
+        </a>
+    </div>
+    <div class="d-table-body">
+        <table class="d-table">
+            <thead>
+                <tr>
+                    <th>Candidat</th>
+                    <th>Ville</th>
+                    <th>Niveau</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody id="recentBody">
+                @for($i = 0; $i < 5; $i++)
+                    <tr>
+                    <td><span class="d-skel" style="display:inline-block;width:150px;height:13px;border-radius:4px"></span></td>
+                    <td><span class="d-skel" style="display:inline-block;width:80px;height:13px;border-radius:4px"></span></td>
+                    <td><span class="d-skel" style="display:inline-block;width:90px;height:13px;border-radius:4px"></span></td>
+                    <td><span class="d-skel" style="display:inline-block;width:70px;height:13px;border-radius:4px"></span></td>
+                    </tr>
+                    @endfor
+            </tbody>
+        </table>
+    </div>
+</div>
 
 </div>{{-- /dash-wrap --}}
 
@@ -914,12 +959,12 @@
         }
 
         /* ── Charts ────────────────────────────────────────────── */
-        let cI, cC, cE, cA;
+        let cI, cC, cE, cA, cP, cF;
         window._dReady = false;
 
         function destroyCharts() {
-            [cI, cC, cE, cA].forEach(c => c?.destroy());
-            cI = cC = cE = cA = null;
+            [cI, cC, cE, cA, cP, cF].forEach(c => c?.destroy());
+            cI = cC = cE = cA = cP = cF = null;
         }
 
         function base(extra) {
@@ -1140,6 +1185,80 @@
             }));
             cA.render();
 
+            /* Postes — bar */
+            clearSkel('wrapPoste');
+            cP = new ApexCharts(document.getElementById('chartPoste'), base({
+                chart: {
+                    type: 'bar',
+                    height: 275
+                },
+                series: [{
+                    name: 'Candidats',
+                    data: data.position_distribution.series
+                }],
+                xaxis: {
+                    categories: data.position_distribution.labels,
+                    labels: {
+                        style: {
+                            colors: p.text,
+                            fontSize: '11px'
+                        }
+                    },
+                    axisBorder: {
+                        show: false
+                    },
+                    axisTicks: {
+                        show: false
+                    }
+                },
+                colors: ['#4cc9f0'],
+                plotOptions: {
+                    bar: {
+                        borderRadius: 5,
+                        columnWidth: '55%'
+                    }
+                },
+                dataLabels: {
+                    enabled: false
+                },
+            }));
+            cP.render();
+
+            /* Pieds forts — donut */
+            clearSkel('wrapPied');
+            cF = new ApexCharts(document.getElementById('chartPied'), base({
+                chart: {
+                    type: 'donut',
+                    height: 275
+                },
+                series: data.foot_distribution.series,
+                labels: data.foot_distribution.labels,
+                plotOptions: {
+                    pie: {
+                        donut: {
+                            size: '65%',
+                            labels: {
+                                show: true,
+                                total: {
+                                    show: true,
+                                    label: 'Total',
+                                    fontSize: '12px',
+                                    color: p.text
+                                }
+                            }
+                        }
+                    }
+                },
+                legend: {
+                    position: 'bottom',
+                    fontSize: '12px'
+                },
+                dataLabels: {
+                    enabled: false
+                },
+            }));
+            cF.render();
+
             window._dReady = true;
         }
 
@@ -1158,17 +1277,7 @@
                     month: 'short',
                     year: 'numeric'
                 });
-                return `<tr>
-        <td><div style="display:flex;align-items:center">
-          <span class="d-avatar">${init}</span>
-          <span style="font-weight:600;color:var(--d-text)">${r.prenom||''} ${r.nom||''}</span>
-        </div></td>
-        <td style="color:var(--d-text2)">
-          <i class="ri-map-pin-line" style="color:#4cc9f0;margin-right:4px;font-size:12px"></i>${r.ville||'—'}
-        </td>
-        <td><span class="d-niveau">${r.niveau_etudes||'—'}</span></td>
-        <td style="color:var(--d-text3);font-size:12px">${date}</td>
-      </tr>`;
+                return `<tr><td><div style="display:flex;align-items:center"><span class="d-avatar">${init}</span><span style="font-weight:600;color:var(--d-text)">${r.prenom||''} ${r.nom||''}</span></div></td><td style="color:var(--d-text2)"><i class="ri-map-pin-line" style="color:#4cc9f0;margin-right:4px;font-size:12px"></i>${r.ville||'—'}</td><td><span class="d-niveau">${r.niveau_etudes||'—'}</span></td><td style="color:var(--d-text3);font-size:12px">${date}</td></tr>`;
             }).join('');
         }
 
@@ -1218,6 +1327,23 @@
                         name: 'Inscriptions',
                         data: data.daily_registrations.series
                     }]);
+                    cC?.updateSeries([{
+                        name: 'Villes',
+                        data: data.city_distribution.series
+                    }]);
+                    cE?.updateSeries([{
+                        name: 'Candidats',
+                        data: data.education_levels.series
+                    }]);
+                    cA?.updateSeries([{
+                        name: 'Candidats',
+                        data: data.age_distribution.series
+                    }]);
+                    cP?.updateSeries([{
+                        name: 'Candidats',
+                        data: data.position_distribution.series
+                    }]);
+                    cF?.updateSeries(data.foot_distribution.series);
                 }
 
                 renderTable(data.recent_activity);
@@ -1235,7 +1361,7 @@
         /* ── Affichage d'erreur inline ─────────────────────────── */
         function showFetchError(msg) {
             // Remplace les skeletons par un message d'erreur lisible
-            ['wrapInsc', 'wrapCity', 'wrapEdu', 'wrapAge'].forEach(id => {
+            ['wrapInsc', 'wrapCity', 'wrapEdu', 'wrapAge', 'wrapPoste', 'wrapPied'].forEach(id => {
                 const el = document.getElementById(id);
                 if (!el) return;
                 el.classList.remove('d-skel', 'd-chart-shell');

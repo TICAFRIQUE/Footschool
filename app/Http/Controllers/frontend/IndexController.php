@@ -20,18 +20,6 @@ class IndexController extends Controller
         return view('frontend.index2', compact('data'));
     }
 
-    // ✅ Normalisation téléphone
-    private function normalizePhone($phone)
-    {
-        return preg_replace('/\D/', '', $phone);
-    }
-
-    // ✅ Normalisation texte
-    private function normalizeText($text)
-    {
-        return preg_replace('/\s+/', ' ', trim($text));
-    }
-
     public function store(Request $request)
     {
         // ── 1. VALIDATION ─────────────────────────
@@ -50,7 +38,7 @@ class IndexController extends Controller
             'niveau_fr'     => ['nullable', 'in:Débutant,Intermédiaire,Avancé'],
             'niveau_en'     => ['nullable', 'in:Débutant,Intermédiaire,Avancé'],
             'niveau_es'     => ['nullable', 'in:Débutant,Intermédiaire,Avancé'],
-            'pieds_fort'    => ['required', 'in:gauche,droit'],
+            'pieds_fort'    => ['required', 'in:gauche,droit,les deux'],
             'numero_poste'  => ['required', 'numeric', 'between:1,11'],
             'urgenceNom'    => ['required', 'string', 'max:200'],
             'urgenceTel'    => ['required', 'string', 'min:8', 'max:20'],
@@ -59,10 +47,10 @@ class IndexController extends Controller
         ]);
 
         // ── 2. NORMALISATION ──────────────────────
-        $nom = strtoupper($this->normalizeText($validated['nom']));
-        $prenom = ucfirst(strtolower($this->normalizeText($validated['prenom'])));
-        $telephone = $this->normalizePhone($validated['candidatTel']);
-        $urgenceTel = $this->normalizePhone($validated['urgenceTel']);
+        $nom = strtoupper(Candidat::normalizeText($validated['nom']));
+        $prenom = ucfirst(strtolower(Candidat::normalizeText($validated['prenom'])));
+        $telephone = Candidat::normalizePhone($validated['candidatTel']);
+        $urgenceTel = Candidat::normalizePhone($validated['urgenceTel']);
 
         // ── 3. DATE ───────────────────────────────
         try {
@@ -125,7 +113,7 @@ class IndexController extends Controller
             'prenom'         => $prenom,
             'date_naissance' => $dateNaissance->toDateString(),
             'age'            => $age,
-            'lieu_naissance' => $this->normalizeText($validated['lieuNaissance']),
+            'lieu_naissance' => Candidat::normalizeText($validated['lieuNaissance']),
             'telephone'      => $telephone,
             'ville'          => $validated['ville'],
             'niveau_etudes'  => $validated['niveau'],
@@ -135,7 +123,7 @@ class IndexController extends Controller
             'niveau_es'      => $validated['niveau_es'] ?? null,
             'pieds_fort'     => $validated['pieds_fort'],
             'numero_poste'   => $validated['numero_poste'],
-            'urgence_nom'    => $this->normalizeText($validated['urgenceNom']),
+            'urgence_nom'    => Candidat::normalizeText($validated['urgenceNom']),
             'urgence_tel'    => $urgenceTel,
         ]);
 

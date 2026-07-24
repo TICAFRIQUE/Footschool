@@ -230,6 +230,28 @@
       transform: translateY(0);
     }
 
+    .hero-secondary-links {
+      margin-top: 18px;
+      display: flex;
+      gap: 18px;
+      justify-content: center;
+      flex-wrap: wrap;
+      animation: fadeSlideDown 0.8s 0.55s ease both;
+    }
+
+    .hero-secondary-links a {
+      color: var(--white);
+      opacity: 0.85;
+      font-size: 0.92rem;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .hero-secondary-links a:hover {
+      opacity: 1;
+      color: var(--orange-light);
+    }
+
     .scroll-hint {
       position: absolute;
       bottom: 28px;
@@ -752,7 +774,7 @@
   <!-- ANTI-SCAM BANNER -->
   <div id="scam-banner">
     <span class="shield">🛡️</span>
-    Préinscription 100% GRATUITE &mdash; Ne payez RIEN à personne ! Toute demande d'argent est une arnaque.
+    Préinscription 100% GRATUITE &mdash; Ne payez jamais un tiers ! Les frais d'inscription officiels se règlent UNIQUEMENT sur cette plateforme.
     <span class="shield">🛡️</span>
   </div>
 
@@ -768,6 +790,11 @@
       <div class="hero-free-badge"><span>✅</span> Préinscription 100% Gratuite &amp; Ouverte à Tous</div>
       <div class="hero-cta">
         <a href="#inscription" class="btn-main">⚽ &nbsp;Je m'inscris maintenant</a>
+      </div>
+      <div class="hero-secondary-links">
+        <a href="{{ route('accueil') }}">← Retour à l'accueil</a>
+        <a href="{{ route('finalisation.connexion') }}">Déjà préinscrit ? Finaliser mon inscription</a>
+        <a href="{{ route('espace.connexion') }}">Espace candidat</a>
       </div>
     </div>
     <div class="scroll-hint">
@@ -1038,7 +1065,7 @@
                 <div class="col-md-6">
                   <div class="field-wrap" id="wrap-pieds-fort">
                     <label class="form-label">Pied fort <span class="required-star">*</span></label>
-                    <div style="display: flex; gap: 10px;">
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                       <div class="lang-btn">
                         <input type="radio" name="pieds_fort" id="pied-gauche" value="gauche" />
                         <label for="pied-gauche">Gauche</label>
@@ -1047,15 +1074,32 @@
                         <input type="radio" name="pieds_fort" id="pied-droit" value="droit" />
                         <label for="pied-droit">Droit</label>
                       </div>
+                      <div class="lang-btn">
+                        <input type="radio" name="pieds_fort" id="pied-les-deux" value="les deux" />
+                        <label for="pied-les-deux">Les deux</label>
+                      </div>
                     </div>
                     <div class="invalid-msg">Veuillez sélectionner votre pied fort.</div>
                   </div>
                 </div>
                 <div class="col-md-6">
                   <div class="field-wrap" id="wrap-numero-poste">
-                    <label class="form-label" for="numeroPoste">Numéro de poste <span class="required-star">*</span></label>
-                    <input type="number" class="form-control" id="numeroPoste" name="numero_poste" placeholder="Ex : 10" min="1" max="11" />
-                    <div class="invalid-msg">Veuillez entrer un numéro entre 1 et 11.</div>
+                    <label class="form-label" for="numeroPoste">Numéro de poste de prédilection <span class="required-star">*</span></label>
+                    <select class="form-select" id="numeroPoste" name="numero_poste">
+                      <option value="">Sélectionnez</option>
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                      <option value="5">5</option>
+                      <option value="6">6</option>
+                      <option value="7">7</option>
+                      <option value="8">8</option>
+                      <option value="9">9</option>
+                      <option value="10">10</option>
+                      <option value="11">11</option>
+                    </select>
+                    <div class="invalid-msg">Veuillez choisir un numéro entre 1 et 11.</div>
                   </div>
                 </div>
               </div>
@@ -1114,7 +1158,10 @@
     <div class="container">
       <p class="text-center">Pour tous besoins Contactez-nous: <a href="mailto:info@schoolfoot.ci">info@schoolfoot.ci</a></p>
       <div class="legal-text">
-        &copy; 2026 SchoolFoot — Tous droits réservés. &bull; Les données collectées sont utilisées uniquement dans le cadre de la préinscription au programme SchoolFoot. Conformément à la réglementation en vigueur, vous disposez d'un droit d'accès, de modification et de suppression de vos données. &bull; Site non commercial — Préinscription gratuite.
+        &copy; 2026 SchoolFoot — Tous droits réservés. &bull; Les données collectées sont utilisées uniquement dans le cadre de la préinscription au programme SchoolFoot. Conformément à la réglementation en vigueur, vous disposez d'un droit d'accès, de modification et de suppression de vos données. &bull; Préinscription gratuite — les frais d'inscription officiels ne se règlent que sur cette plateforme.
+      </div>
+      <div style="text-align: center; margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(0,0,0,0.1); font-size: 13px; color: #666;">
+        Développé par <a href="https://ticafrique.ci" target="_blank" style="color: #2c3e50; font-weight: 600; text-decoration: none;">TICAFRIQUE</a>
       </div>
     </div>
   </footer>
@@ -1127,7 +1174,7 @@
       <p>
         Ta préinscription a bien été enregistrée.<br />
         Notre équipe te contactera dans les <strong>72 heures</strong> sur le numéro que tu as indiqué.<br /><br />
-        <span style="color: #6dffa0; font-weight: 700">Rappel : SchoolFoot ne te demandera JAMAIS de payer.</span>
+        <span style="color: #6dffa0; font-weight: 700">Rappel : cette préinscription est gratuite. Si tu es retenu, les frais d'inscription officiels se paient uniquement sur ce site — jamais à une personne.</span>
       </p>
       <button class="btn-close-success" id="closeSuccess">Fermer ✓</button>
     </div>

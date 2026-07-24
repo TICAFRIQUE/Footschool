@@ -24,8 +24,8 @@ return new class extends Migration
             $table->enum('niveau_es', ['Débutant', 'Intermédiaire', 'Avancé'])->nullable();
 
             //pieds fort & numeros de poste
-            $table->enum('pieds_fort', ['gauche', 'droit'])->nullable();
-            $table->integer('numero_poste')->unique()->nullable();
+            $table->enum('pieds_fort', ['gauche', 'droit' , 'les deux'])->nullable();
+            $table->integer('numero_poste')->nullable(); // Plusieurs candidats peuvent préférer le même poste
 
             $table->string('urgence_nom');
             $table->string('urgence_tel');

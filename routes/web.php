@@ -12,10 +12,13 @@ use App\Http\Controllers\backend\CommandeServiceController;
 use App\Http\Controllers\frontend\BaseController;
 use App\Http\Controllers\frontend\HebergementController;
 use App\Http\Controllers\frontend\IndexController;
+use App\Http\Controllers\frontend\InscriptionPaiementController;
+use App\Http\Controllers\frontend\EspaceCandidatController;
 use App\Http\Controllers\frontend\NomDomaineController;
 use App\Http\Controllers\Api\StatsController;       // ← nouveau StatsController
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\backend\CandidatController;
+use App\Http\Controllers\backend\InscriptionController;
 
 
 Route::fallback(function () {
@@ -88,13 +91,56 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
     });
 
     // ── Candidats ─────────────────────────────────────────────────
-    Route::get('/candidat',         [CandidatController::class, 'index'])->name('candidat.index');
-    Route::delete('/candidat/{id}', [CandidatController::class, 'destroy'])->name('candidat.destroy');
+    Route::get('/candidat',              [CandidatController::class, 'index'])->name('candidat.index');
+    Route::get('/candidat/{id}/fiche',   [CandidatController::class, 'fiche'])->name('candidat.fiche');
+    Route::delete('/candidat/{id}',      [CandidatController::class, 'destroy'])->name('candidat.destroy');
+
+    // ── Inscriptions (candidats inscrits + paiement) ────────────────
+    Route::get('/inscriptions', [InscriptionController::class, 'index'])->name('inscriptions.index');
 });
 
 
-// ── Frontend ──────────────────────────────────────────────────────
+// ── Préinscription (ancienne page d'accueil, désormais secondaire) ──
 Route::controller(IndexController::class)->group(function () {
-    Route::get('/',            'index')->name('index');
-    Route::post('/inscription', 'store')->name('inscription.store');
+    Route::get('/preinscription', 'index')->name('preinscription');
+    Route::post('/inscription',   'store')->name('inscription.store');
 });
+
+// ── Accueil : présentation de l'inscription officielle (phase 2) ────
+Route::get('/', [InscriptionPaiementController::class, 'accueil'])->name('accueil');
+
+// ── Finalisation de l'inscription (formulaire + paiement) ────────────
+Route::controller(InscriptionPaiementController::class)
+    ->prefix('inscription-officielle')->name('finalisation.')
+    ->group(function () {
+        Route::get('/',           'connexion')->name('connexion');
+        Route::post('/verifier',  'verifier')->middleware('throttle:10,1')->name('verifier');
+
+        Route::middleware('inscription.session')->group(function () {
+            Route::get('/confirmation',  'confirmation')->name('confirmation');
+            Route::post('/confirmer',    'confirmer')->name('confirmer');
+            Route::get('/informations',  'informations')->name('informations');
+            Route::post('/informations', 'enregistrerInformations')->name('informations.store');
+            Route::get('/paiement',      'paiement')->name('paiement');
+            Route::post('/paiement/initier', 'initierPaiement')->name('paiement.initier');
+        });
+
+        Route::get('/paiement/simuler/{paiement}', 'simulerFormulaire')->name('paiement.simuler');
+        Route::post('/paiement/callback',           'callback')->name('paiement.callback');
+        Route::get('/retour/{paiement}',            'retour')->name('retour');
+    });
+
+// ── Espace candidat ─────────────────────────────────────────────────
+Route::controller(EspaceCandidatController::class)
+    ->prefix('espace-candidat')->name('espace.')
+    ->group(function () {
+        Route::get('/',           'connexion')->name('connexion');
+        Route::post('/verifier',  'verifier')->middleware('throttle:10,1')->name('verifier');
+
+        Route::middleware('espace.candidat')->group(function () {
+            Route::get('/dashboard',       'dashboard')->name('dashboard');
+            Route::get('/fiche',           'fiche')->name('fiche');
+            Route::get('/recu/{paiement}', 'recu')->name('recu');
+            Route::post('/deconnexion',    'deconnexion')->name('deconnexion');
+        });
+    });
