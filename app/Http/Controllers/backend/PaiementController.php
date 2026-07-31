@@ -49,4 +49,33 @@ class PaiementController extends Controller
 
         return back();
     }
+
+    /**
+     * Supprime un paiement précis. S'il s'agissait du dernier paiement réussi
+     * du candidat, son inscription est automatiquement annulée (retour à
+     * préinscrit) pour ne pas laisser un statut "inscrit" sans paiement valide.
+     */
+    public function destroy(Paiement $paiement)
+    {
+        try {
+            $candidat = $paiement->candidat;
+            $etaitReussi = $paiement->statut === 'reussi';
+
+            $paiement->delete();
+
+            if ($etaitReussi && $candidat && ! $candidat->paiements()->where('statut', 'reussi')->exists()) {
+                $candidat->reinitialiserInscription();
+            }
+
+            return response()->json([
+                'status'  => 'success',
+                'message' => 'Paiement supprimé.',
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status'  => 'error',
+                'message' => 'Erreur lors de la suppression : ' . $e->getMessage(),
+            ], 500);
+        }
+    }
 }

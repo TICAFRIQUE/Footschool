@@ -72,6 +72,9 @@
                                 <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#modalValider{{ $item->id }}">
                                     <i class="ri-check-line"></i> Marquer payé
                                 </button>
+                                <button type="button" class="btn btn-outline-danger btn-sm delete-inscription" data-id="{{ $item->id }}" title="Supprimer">
+                                    <i class="ri-delete-bin-line"></i>
+                                </button>
                             </td>
                         </tr>
                         @empty
@@ -127,7 +130,7 @@
 
 <script>
     $(document).ready(function() {
-        $('#paiements-datatable').DataTable({
+        var table = $('#paiements-datatable').DataTable({
             responsive: true,
             "language": { "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/French.json" },
             columnDefs: [
@@ -135,6 +138,19 @@
                 { targets: 0, responsivePriority: 1 },
                 { targets: [1, 3, 4], responsivePriority: 2 }
             ]
+        });
+
+        // Supprime le dossier : le candidat repasse en préinscrit et doit tout refaire
+        $(document).on('click', '.delete-inscription', function() {
+            var id = $(this).data('id');
+            if (confirm("Supprimer ce dossier ? Le candidat repassera en préinscrit et devra refaire toute la procédure d'inscription (numéro de dossier, infos parents et paiements liés effacés).")) {
+                $.ajax({
+                    url: '/admin/inscriptions/' + id,
+                    type: 'DELETE',
+                    data: { _token: '{{ csrf_token() }}' },
+                    success: function() { table.row('#row_' + id).remove().draw(); }
+                });
+            }
         });
     });
 </script>

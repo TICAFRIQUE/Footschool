@@ -201,6 +201,12 @@
                                                 <i class="ri-printer-fill me-2 align-bottom text-muted"></i> Imprimer la fiche
                                             </a>
                                         </li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li>
+                                            <a class="dropdown-item text-danger delete-inscription" href="javascript:void(0);" data-id="{{ $item->id }}">
+                                                <i class="ri-close-circle-fill me-2 align-bottom"></i> Supprimer l'inscription
+                                            </a>
+                                        </li>
                                     </ul>
                                 </div>
                             </td>
@@ -259,6 +265,9 @@
                             <div class="col-md-3 mb-2"><p class="text-muted mb-1 small">Moyen</p><p class="fw-medium">{{ ucfirst($paiement->moyen) }}</p></div>
                             <div class="col-md-3 mb-2"><p class="text-muted mb-1 small">Date</p><p class="fw-medium">{{ $paiement->updated_at->format('d/m/Y H:i') }}</p></div>
                         </div>
+                        <button type="button" class="btn btn-outline-danger btn-sm delete-paiement mt-2" data-id="{{ $paiement->id }}">
+                            <i class="ri-delete-bin-line align-bottom"></i> Supprimer ce paiement
+                        </button>
                         @else
                         <p class="text-muted">Aucun paiement réussi enregistré.</p>
                         @endif
@@ -349,6 +358,32 @@
         $('#reset_filters').on('click', function() {
             $('#start_date, #end_date, #select_ville, #select_moyen').val('');
             table.search('').column(5).search('').draw();
+        });
+
+        // Supprimer l'inscription : remet le candidat en préinscrit et l'enlève de cette liste
+        $(document).on('click', '.delete-inscription', function() {
+            var id = $(this).data('id');
+            if (confirm("Supprimer cette inscription ? Le candidat repassera en préinscrit (numéro de dossier, infos parents et paiements liés effacés).")) {
+                $.ajax({
+                    url: '/admin/inscriptions/' + id,
+                    type: 'DELETE',
+                    data: { _token: '{{ csrf_token() }}' },
+                    success: function() { table.row('#row_' + id).remove().draw(); }
+                });
+            }
+        });
+
+        // Supprimer un paiement précis depuis la modale de détail
+        $(document).on('click', '.delete-paiement', function() {
+            var id = $(this).data('id');
+            if (confirm("Supprimer ce paiement ? Si c'était le dernier paiement validé, le candidat repassera en préinscrit.")) {
+                $.ajax({
+                    url: '/admin/paiements/' + id,
+                    type: 'DELETE',
+                    data: { _token: '{{ csrf_token() }}' },
+                    success: function() { location.reload(); }
+                });
+            }
         });
     });
 </script>

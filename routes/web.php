@@ -97,11 +97,13 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
     Route::delete('/candidat/{id}',      [CandidatController::class, 'destroy'])->name('candidat.destroy');
 
     // ── Inscriptions (candidats inscrits + paiement) ────────────────
-    Route::get('/inscriptions', [InscriptionController::class, 'index'])->name('inscriptions.index');
+    Route::get('/inscriptions',      [InscriptionController::class, 'index'])->name('inscriptions.index');
+    Route::delete('/inscriptions/{id}', [InscriptionController::class, 'destroy'])->name('inscriptions.destroy');
 
     // ── Paiements en attente (validation manuelle Wave) ──────────────
     Route::get('/paiements-attente', [PaiementController::class, 'index'])->name('paiements.index');
     Route::post('/paiements-attente/{candidat}/valider', [PaiementController::class, 'valider'])->name('paiements.valider');
+    Route::delete('/paiements/{paiement}', [PaiementController::class, 'destroy'])->name('paiements.destroy');
 });
 
 

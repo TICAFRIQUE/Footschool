@@ -82,6 +82,26 @@ class Candidat extends Model
         return $this->numero_dossier;
     }
 
+    /**
+     * Annule l'inscription (phase 2) : remet le candidat à l'état préinscrit
+     * (numéro de dossier, date d'inscription et infos parents effacés).
+     * La préinscription elle-même (nom, téléphone, etc.) n'est jamais touchée.
+     */
+    public function reinitialiserInscription(): void
+    {
+        $this->update([
+            'statut'        => 'preinscrit',
+            'numero_dossier' => null,
+            'inscrit_at'    => null,
+            'pere_nom'      => null,
+            'pere_prenom'   => null,
+            'pere_contact'  => null,
+            'mere_nom'      => null,
+            'mere_prenom'   => null,
+            'mere_contact'  => null,
+        ]);
+    }
+
     // ✅ Normalisation téléphone — partagée entre préinscription et phase inscription
     public static function normalizePhone(string $phone): string
     {
