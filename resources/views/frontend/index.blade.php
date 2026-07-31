@@ -251,6 +251,17 @@
       transform: translateY(-3px);
     }
 
+    .btn-main-outline .btn-caption {
+      display: block;
+      font-family: "Nunito", sans-serif;
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      text-transform: none;
+      opacity: 0.75;
+      margin-top: 2px;
+    }
+
     .hero-cta-row {
       display: flex;
       gap: 16px;
@@ -836,7 +847,10 @@
       <div class="hero-cta">
         <div class="hero-cta-row">
           <a href="#inscription" class="btn-main">⚽ &nbsp;Commencer ma préinscription</a>
-          <a href="{{ route('espace.entree') }}" class="btn-main-outline">Déjà préinscrit ?</a>
+          <a href="{{ route('espace.entree') }}" class="btn-main-outline">
+            Déjà préinscrit ?
+            <span class="btn-caption">finaliser votre inscription</span>
+          </a>
         </div>
       </div>
     </div>
