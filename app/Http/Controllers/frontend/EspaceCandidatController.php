@@ -15,6 +15,24 @@ class EspaceCandidatController extends Controller
         return view('frontend.espace.connexion');
     }
 
+    /**
+     * Point d'entrée du bouton "Déjà préinscrit ?" : si le candidat est déjà
+     * connecté (espace, ou tunnel de finalisation en cours), direction son
+     * espace directement — c'est là qu'il verra quoi faire ensuite (finir
+     * son dossier, payer, envoyer sa preuve...). Sinon, direction la
+     * connexion espace candidat classique.
+     */
+    public function entree(Request $request)
+    {
+        if (! $request->session()->get('espace_candidat_id') && $request->session()->get('finalisation_candidat_id')) {
+            $request->session()->put('espace_candidat_id', $request->session()->get('finalisation_candidat_id'));
+        }
+
+        return $request->session()->get('espace_candidat_id')
+            ? redirect()->route('espace.dashboard')
+            : redirect()->route('espace.connexion');
+    }
+
     public function verifier(Request $request)
     {
         $validated = $request->validate([

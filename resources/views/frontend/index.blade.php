@@ -836,7 +836,7 @@
       <div class="hero-cta">
         <div class="hero-cta-row">
           <a href="#inscription" class="btn-main">⚽ &nbsp;Commencer ma préinscription</a>
-          <a href="{{ route('finalisation.reprendre') }}" class="btn-main-outline">Déjà préinscrit ?</a>
+          <a href="{{ route('espace.entree') }}" class="btn-main-outline">Déjà préinscrit ?</a>
         </div>
       </div>
     </div>

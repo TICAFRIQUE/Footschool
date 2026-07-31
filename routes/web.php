@@ -145,6 +145,7 @@ Route::controller(EspaceCandidatController::class)
     ->group(function () {
         Route::get('/',           'connexion')->name('connexion');
         Route::post('/verifier',  'verifier')->middleware('throttle:10,1')->name('verifier');
+        Route::get('/entree',     'entree')->name('entree');
 
         Route::middleware('espace.candidat')->group(function () {
             Route::get('/dashboard',       'dashboard')->name('dashboard');

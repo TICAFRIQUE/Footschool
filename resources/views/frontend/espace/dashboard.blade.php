@@ -40,9 +40,7 @@
   .timeline-dot.done { background: var(--green-light); }
   .timeline-dot.pending { background: #6b6f76; }
 
-  .btn-whatsapp-espace {
-    background: #25D366;
-    color: #06280f;
+  .btn-whatsapp-espace, .btn-wave-espace {
     font-weight: 700;
     border: none;
     border-radius: 10px;
@@ -53,9 +51,20 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-    margin-top: 10px;
   }
+  .btn-wave-espace { background: #1DC8CD; color: #002E2F; }
+  .btn-wave-espace:hover { background: #3ad8dc; color: #002E2F; }
+  .btn-whatsapp-espace { background: #25D366; color: #06280f; }
   .btn-whatsapp-espace:hover { background: #3ee27a; color: #06280f; }
+
+  .pay-action { margin-top: 14px; }
+  .pay-action-label {
+    font-size: .85rem;
+    color: inherit;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .pay-action-note { font-size: .8rem; color: inherit; opacity: .75; }
 
   @media print {
     .brand-bar, .no-print { display: none !important; }
@@ -102,14 +111,29 @@
 
   @if ($candidat->statut === 'en_attente_paiement')
     <div class="alert alert-warning no-print">
-      <p class="mb-0">
-        Ton dossier est complet. Une fois le paiement de
-        <strong>{{ number_format(config('payment.montant_inscription'), 0, ',', ' ') }} FCFA</strong> effectué sur Wave,
-        envoie ta preuve pour valider ton inscription :
+      <p class="mb-3">
+        Ton dossier est complet. Il ne reste que le paiement de
+        <strong>{{ number_format(config('payment.montant_inscription'), 0, ',', ' ') }} FCFA</strong>
+        pour valider ton inscription.
       </p>
-      <a href="{{ $candidat->lienPreuveWhatsapp() }}" target="_blank" rel="noopener" class="btn-whatsapp-espace">
-        <i class="bi bi-whatsapp"></i> Envoyer ma preuve par WhatsApp
-      </a>
+
+      <div class="pay-action">
+        <p class="pay-action-label">❌ Tu n'as <strong>pas encore payé</strong> ? Clique ici pour payer :</p>
+        <a href="{{ config('payment.wave_payment_link') }}" target="_blank" rel="noopener" class="btn-wave-espace">
+          <i class="bi bi-box-arrow-up-right"></i> Payer {{ number_format(config('payment.montant_inscription'), 0, ',', ' ') }} FCFA sur Wave
+        </a>
+      </div>
+
+      <div class="pay-action">
+        <p class="pay-action-label">✅ Tu as <strong>déjà payé</strong> ? Clique ici pour envoyer ta preuve :</p>
+        <a href="{{ $candidat->lienPreuveWhatsapp() }}" target="_blank" rel="noopener" class="btn-whatsapp-espace">
+          <i class="bi bi-whatsapp"></i> Envoyer ma preuve par WhatsApp
+        </a>
+      </div>
+
+      <p class="pay-action-note mb-0 mt-3">
+        Après le paiement Wave, garde une capture d'écran de la confirmation : c'est elle qu'il faut envoyer par WhatsApp.
+      </p>
     </div>
   @elseif ($candidat->statut !== 'inscrit')
     <div class="alert alert-warning no-print">
