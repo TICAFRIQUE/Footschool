@@ -86,8 +86,8 @@
     /* HERO */
     #hero {
       position: relative;
-      min-height: 100vh;
-      padding-top: 48px;
+      min-height: 92vh;
+      padding-top: 8px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -230,27 +230,62 @@
       transform: translateY(0);
     }
 
-    .hero-secondary-links {
-      margin-top: 18px;
-      display: flex;
-      gap: 18px;
-      justify-content: center;
-      flex-wrap: wrap;
-      animation: fadeSlideDown 0.8s 0.55s ease both;
-    }
-
-    .hero-secondary-links a {
+    .btn-main-outline {
+      background: transparent;
       color: var(--white);
-      opacity: 0.85;
-      font-size: 0.92rem;
-      text-decoration: underline;
-      text-underline-offset: 3px;
+      font-family: "Bebas Neue", sans-serif;
+      font-size: clamp(1.2rem, 3.5vw, 1.55rem);
+      letter-spacing: 0.1em;
+      border: 2px solid rgba(255, 255, 255, 0.5);
+      border-radius: 4px;
+      padding: 12px 42px;
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s, transform 0.15s;
+      display: inline-block;
+      text-decoration: none;
     }
 
-    .hero-secondary-links a:hover {
-      opacity: 1;
+    .btn-main-outline:hover {
+      border-color: var(--orange);
       color: var(--orange-light);
+      transform: translateY(-3px);
     }
+
+    .hero-cta-row {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    /* TOP-BAR (sous la bannière anti-arnaque) */
+    .top-bar {
+      position: relative;
+      z-index: 3;
+      padding: 60px 24px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      font-family: "Barlow Condensed", sans-serif;
+    }
+
+    .btn-nav {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--white);
+      text-decoration: none;
+      font-weight: 700;
+      letter-spacing: .04em;
+      font-size: .85rem;
+      padding: 7px 14px;
+      border-radius: 50px;
+      border: 1px solid rgba(255,255,255,.25);
+      transition: border-color .2s, color .2s;
+    }
+
+    .btn-nav:hover { border-color: var(--orange); color: var(--orange-light); }
 
     .scroll-hint {
       position: absolute;
@@ -778,6 +813,16 @@
     <span class="shield">🛡️</span>
   </div>
 
+  <!-- TOP BAR -->
+  <div class="top-bar">
+    <a href="{{ route('accueil') }}" class="btn-nav"><i class="bi bi-house-door"></i> Accueil</a>
+    @if (session('espace_candidat_id'))
+      <a href="{{ route('espace.dashboard') }}" class="btn-nav"><i class="bi bi-person-badge"></i> Mon espace</a>
+    @else
+      <a href="{{ route('espace.connexion') }}" class="btn-nav"><i class="bi bi-person-badge"></i> Espace candidat</a>
+    @endif
+  </div>
+
   <!-- HERO -->
   <section id="hero" style="background:
       linear-gradient(to bottom, rgba(10,30,12,0.72) 0%, rgba(10,30,12,0.55) 60%, rgba(10,30,12,0.82) 100%),
@@ -789,12 +834,10 @@
       <p class="hero-sub">La 1ère Téléréalité de Détection de Talents Footballistiques en Côte d'Ivoire</p>
       <div class="hero-free-badge"><span>✅</span> Préinscription 100% Gratuite &amp; Ouverte à Tous</div>
       <div class="hero-cta">
-        <a href="#inscription" class="btn-main">⚽ &nbsp;Je m'inscris maintenant</a>
-      </div>
-      <div class="hero-secondary-links">
-        <a href="{{ route('accueil') }}">← Retour à l'accueil</a>
-        <a href="{{ route('finalisation.connexion') }}">Déjà préinscrit ? Finaliser mon inscription</a>
-        <a href="{{ route('espace.connexion') }}">Espace candidat</a>
+        <div class="hero-cta-row">
+          <a href="#inscription" class="btn-main">⚽ &nbsp;Commencer ma préinscription</a>
+          <a href="{{ route('finalisation.reprendre') }}" class="btn-main-outline">Déjà préinscrit ?</a>
+        </div>
       </div>
     </div>
     <div class="scroll-hint">

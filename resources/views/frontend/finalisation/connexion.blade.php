@@ -247,7 +247,7 @@
 
   <!-- BANNIÈRE OFFICIELLE -->
   <div id="scam-banner">
-    🛡️ Les frais (65 000 FCFA) se paient UNIQUEMENT sur cette plateforme. Ne payez jamais un tiers ! 🛡️
+    🛡️ Les frais ({{ number_format(config('payment.montant_inscription'), 0, ',', ' ') }} FCFA) se paient UNIQUEMENT sur cette plateforme. Ne payez jamais un tiers ! 🛡️
   </div>
 
   <!-- EN-TÊTE -->
@@ -290,6 +290,12 @@
               <p class="invalid-msg mb-1">{{ $error }}</p>
             @endforeach
           </div>
+        @endif
+
+        @if ($errors->has('candidat'))
+          <a href="{{ route('preinscription') }}#inscription" class="btn-submit d-block text-center text-decoration-none mb-3">
+            Faire ma préinscription
+          </a>
         @endif
 
         <form method="POST" action="{{ route('finalisation.verifier') }}">

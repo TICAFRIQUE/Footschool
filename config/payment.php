@@ -18,7 +18,7 @@ return [
     | Montant de l'inscription (en FCFA)
     |--------------------------------------------------------------------------
     */
-    'montant_inscription' => (int) env('INSCRIPTION_MONTANT', 65000),
+    'montant_inscription' => (int) env('INSCRIPTION_MONTANT', 65650),
 
     'wave' => [
         'api_key'    => env('WAVE_API_KEY'),

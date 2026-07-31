@@ -83,6 +83,20 @@ class Candidat extends Model
     }
 
     /**
+     * Lien WhatsApp pré-rempli pour envoyer la preuve de paiement, avec
+     * nom complet et numéro de dossier pour faciliter la vérification admin.
+     */
+    public function lienPreuveWhatsapp(): string
+    {
+        $message = "Bonjour, voici la preuve de paiement de mon inscription SchoolFoot.\n"
+            . "Nom complet : {$this->prenom} " . strtoupper($this->nom) . "\n"
+            . "Numéro de dossier : {$this->numero_dossier}\n"
+            . "Téléphone : {$this->telephone}";
+
+        return 'https://wa.me/' . config('payment.whatsapp_number') . '?text=' . rawurlencode($message);
+    }
+
+    /**
      * Annule l'inscription (phase 2) : remet le candidat à l'état préinscrit
      * (numéro de dossier, date d'inscription et infos parents effacés).
      * La préinscription elle-même (nom, téléphone, etc.) n'est jamais touchée.

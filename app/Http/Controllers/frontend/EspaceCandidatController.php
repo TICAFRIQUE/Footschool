@@ -27,7 +27,7 @@ class EspaceCandidatController extends Controller
 
         if (! $candidat) {
             return back()
-                ->withErrors(['telephone' => "Aucun dossier trouvé pour ce numéro."])
+                ->withErrors(['candidat' => "Aucun dossier trouvé pour ce numéro. Tu dois d'abord faire ta préinscription."])
                 ->withInput();
         }
 

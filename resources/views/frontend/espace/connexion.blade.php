@@ -16,6 +16,12 @@
     </div>
   @endif
 
+  @if ($errors->has('candidat'))
+    <a href="{{ route('preinscription') }}#inscription" class="btn btn-primary-foot w-100 mb-3">
+      Faire ma préinscription
+    </a>
+  @endif
+
   <form method="POST" action="{{ route('espace.verifier') }}">
     @csrf
     <div class="mb-3">

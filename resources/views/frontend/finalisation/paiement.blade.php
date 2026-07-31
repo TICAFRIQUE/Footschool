@@ -40,21 +40,6 @@
     gap: 8px;
   }
   .btn-wave:hover { background: #3ad8dc; color: #002E2F; }
-  .btn-whatsapp {
-    background: #25D366;
-    color: #06280f;
-    font-weight: 700;
-    border: none;
-    border-radius: 10px;
-    padding: 14px 20px;
-    width: 100%;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-  }
-  .btn-whatsapp:hover { background: #3ee27a; color: #06280f; }
 </style>
 @endpush
 
@@ -89,11 +74,10 @@
     <div class="pay-step">
       <span class="pay-step-num"></span>
       <div>
-        <strong>Envoie la preuve par WhatsApp</strong>
+        <strong>Envoie la preuve depuis ton espace candidat</strong>
         <p class="mb-0" style="color: rgba(248,249,245,.6); font-size: .88rem;">
-          Envoie la capture au {{ $whatsappDisplay }} en précisant ton <strong>nom complet</strong> ({{ $nomComplet }})
-          et ton <strong>numéro de dossier</strong> ({{ $candidat->numero_dossier }}) pour valider ton inscription.
-          Le bouton ci-dessous pré-remplit déjà ces informations. Notre équipe confirmera ton dossier après vérification.
+          Une fois payé, va dans ton <strong>espace candidat</strong> : le bouton "Envoyer ma preuve par WhatsApp"
+          t'y attend, avec ton nom complet et ton numéro de dossier déjà pré-remplis.
         </p>
       </div>
     </div>
@@ -103,14 +87,12 @@
     <a href="{{ $wavePaymentLink }}" target="_blank" rel="noopener" class="btn-wave">
       <i class="bi bi-box-arrow-up-right"></i> Payer {{ number_format($montant, 0, ',', ' ') }} FCFA sur Wave
     </a>
-    <a href="{{ $whatsappLink }}" target="_blank" rel="noopener" class="btn-whatsapp">
-      <i class="bi bi-whatsapp"></i> Envoyer ma preuve par WhatsApp
-    </a>
   </div>
 
   <div class="alert alert-warning mt-4" style="background: rgba(247,184,75,.12); border: 1px solid rgba(247,184,75,.3); color: #f7b84b; font-size: .85rem;">
-    <i class="bi bi-info-circle"></i> Ton inscription passera en statut « Inscrit » dès que notre équipe aura vérifié ta preuve de paiement.
-    Tu peux suivre l'évolution depuis ton <a href="{{ route('espace.connexion') }}" style="color: #f7b84b; text-decoration: underline;">espace candidat</a>.
+    <i class="bi bi-info-circle"></i> Après avoir payé, rends-toi dans ton
+    <a href="{{ route('espace.connexion') }}" style="color: #f7b84b; text-decoration: underline;">espace candidat</a>
+    pour envoyer ta preuve. Ton inscription passera en statut « Inscrit » dès que notre équipe l'aura vérifiée.
   </div>
 </div>
 @endsection

@@ -107,22 +107,23 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
 });
 
 
-// ── Préinscription (ancienne page d'accueil, désormais secondaire) ──
+// ── Accueil = Préinscription (toujours ouverte) ──────────────────────
 Route::controller(IndexController::class)->group(function () {
-    Route::get('/preinscription', 'index')->name('preinscription');
-    Route::post('/inscription',   'store')->name('inscription.store');
+    Route::get('/',                'index')->name('accueil');
+    Route::get('/preinscription',  'index')->name('preinscription'); // alias, garde les anciens liens valides
+    Route::post('/inscription',    'store')->name('inscription.store');
 });
-
-// ── Accueil : présentation de l'inscription officielle (phase 2) ────
-Route::get('/', [InscriptionPaiementController::class, 'accueil'])->name('accueil');
 
 // ── Finalisation de l'inscription (formulaire + paiement) ────────────
 Route::controller(InscriptionPaiementController::class)
     ->prefix('inscription-officielle')->name('finalisation.')
     ->group(function () {
+        // Landing "Inscription officielle" (hero + étapes + contact) : conservée
+        // mais non reliée depuis la navigation principale, qui pointe direct sur connexion.
+        Route::get('/presentation', 'accueil')->name('accueil');
         Route::get('/',           'connexion')->name('connexion');
         Route::post('/verifier',  'verifier')->middleware('throttle:10,1')->name('verifier');
-        Route::get('/reprendre',  'reprendre')->middleware('espace.candidat')->name('reprendre');
+        Route::get('/reprendre',  'reprendre')->name('reprendre');
 
         Route::middleware('inscription.session')->group(function () {
             Route::get('/confirmation',  'confirmation')->name('confirmation');

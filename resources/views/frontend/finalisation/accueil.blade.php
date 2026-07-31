@@ -360,7 +360,7 @@
   <!-- BANNIÈRE OFFICIELLE -->
   <div id="scam-banner">
     <span class="shield">🛡️</span>
-    Inscription officielle — Les frais (65 000 FCFA) se paient UNIQUEMENT sur cette plateforme. Ne payez jamais un tiers !
+    Inscription officielle — Les frais (65 650 FCFA) se paient UNIQUEMENT sur cette plateforme. Ne payez jamais un à tiers !
     <span class="shield">🛡️</span>
   </div>
 
@@ -374,7 +374,7 @@
         Tu as déjà été préinscrit ? Confirme tes informations, complète ton dossier
         et règle les frais d'inscription pour valider définitivement ta place.
       </p>
-      <div class="hero-badge">🔒 Paiement sécurisé — 65 000 FCFA — Officiel &amp; Unique</div>
+      <div class="hero-badge">🔒 Paiement sécurisé — 65 650 FCFA — Officiel &amp; Unique</div>
       <div class="hero-cta">
         <a href="{{ route('finalisation.connexion') }}" class="btn-main">📋 &nbsp;Commencer mon inscription</a>
       </div>
@@ -426,7 +426,7 @@
           <div class="etape-card">
             <div class="etape-num">04</div>
             <h4>Paiement</h4>
-            <p>Règle les 65 000 FCFA d'inscription pour valider ta place.</p>
+            <p>Règle les 65 650 FCFA d'inscription pour valider ta place.</p>
           </div>
         </div>
       </div>
@@ -448,7 +448,7 @@
         <div class="col-sm-6 col-lg-4">
           <div class="contact-card">
             <span class="icon"><i class="bi bi-whatsapp"></i></span>
-            <h4>WhatsApp</h4>
+            <h4>WhatsApp & Appel</h4>
             <a href="tel:+2250715094421">+225 07 15 09 44 21</a>
           </div>
         </div>

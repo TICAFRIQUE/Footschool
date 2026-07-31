@@ -22,13 +22,21 @@ class InscriptionPaiementController extends Controller
     }
 
     /**
-     * Pont entre l'espace candidat (déjà connecté) et le tunnel de finalisation
-     * d'inscription : évite de redemander le téléphone puisque le candidat est
-     * déjà authentifié via sa session espace candidat.
+     * Point d'entrée intelligent du bouton "Déjà préinscrit ?" : si le candidat
+     * est déjà connecté (espace candidat ou tunnel de finalisation en cours),
+     * on saute directement à la bonne étape sans redemander le téléphone.
+     * Sinon, direction le formulaire d'identification classique.
      */
     public function reprendre(Request $request)
     {
-        $candidat = Candidat::findOrFail($request->session()->get('espace_candidat_id'));
+        $candidatId = $request->session()->get('espace_candidat_id')
+            ?? $request->session()->get('finalisation_candidat_id');
+
+        $candidat = $candidatId ? Candidat::find($candidatId) : null;
+
+        if (! $candidat) {
+            return redirect()->route('finalisation.connexion');
+        }
 
         if ($redirect = $this->bloquerSiDejaInscrit($candidat)) {
             return $redirect;
@@ -58,7 +66,7 @@ class InscriptionPaiementController extends Controller
 
         if (! $candidat) {
             return back()
-                ->withErrors(['telephone' => "Aucune préinscription trouvée pour ce numéro."])
+                ->withErrors(['candidat' => "Aucune préinscription trouvée pour ce numéro. Tu dois d'abord faire ta préinscription avant de pouvoir finaliser ton inscription."])
                 ->withInput();
         }
 
@@ -147,14 +155,9 @@ class InscriptionPaiementController extends Controller
         $whatsappNumber = config('payment.whatsapp_number');
         $whatsappDisplay = implode(' ', str_split(substr($whatsappNumber, -10), 2));
         $nomComplet = $candidat->prenom . ' ' . strtoupper($candidat->nom);
-        $whatsappMessage = "Bonjour, voici la preuve de paiement de mon inscription SchoolFoot.\n"
-            . "Nom complet : {$nomComplet}\n"
-            . "Numéro de dossier : {$candidat->numero_dossier}\n"
-            . "Téléphone : {$candidat->telephone}";
-        $whatsappLink = 'https://wa.me/' . $whatsappNumber . '?text=' . rawurlencode($whatsappMessage);
 
         return view('frontend.finalisation.paiement', compact(
-            'candidat', 'montant', 'wavePaymentLink', 'whatsappNumber', 'whatsappDisplay', 'whatsappLink', 'nomComplet'
+            'candidat', 'montant', 'wavePaymentLink', 'whatsappDisplay', 'nomComplet'
         ));
     }
 

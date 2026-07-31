@@ -40,6 +40,23 @@
   .timeline-dot.done { background: var(--green-light); }
   .timeline-dot.pending { background: #6b6f76; }
 
+  .btn-whatsapp-espace {
+    background: #25D366;
+    color: #06280f;
+    font-weight: 700;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 20px;
+    width: 100%;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .btn-whatsapp-espace:hover { background: #3ee27a; color: #06280f; }
+
   @media print {
     .brand-bar, .no-print { display: none !important; }
     body { background: #fff !important; color: #000 !important; }
@@ -83,8 +100,19 @@
     </button>
   </div>
 
-  @if ($candidat->statut !== 'inscrit')
-    <div class="alert alert-warning">
+  @if ($candidat->statut === 'en_attente_paiement')
+    <div class="alert alert-warning no-print">
+      <p class="mb-0">
+        Ton dossier est complet. Une fois le paiement de
+        <strong>{{ number_format(config('payment.montant_inscription'), 0, ',', ' ') }} FCFA</strong> effectué sur Wave,
+        envoie ta preuve pour valider ton inscription :
+      </p>
+      <a href="{{ $candidat->lienPreuveWhatsapp() }}" target="_blank" rel="noopener" class="btn-whatsapp-espace">
+        <i class="bi bi-whatsapp"></i> Envoyer ma preuve par WhatsApp
+      </a>
+    </div>
+  @elseif ($candidat->statut !== 'inscrit')
+    <div class="alert alert-warning no-print">
       Ton inscription n'est pas encore finalisée.
       <a href="{{ route('finalisation.reprendre') }}">Terminer mon inscription</a>
     </div>
