@@ -56,10 +56,17 @@ class AppServiceProvider extends ServiceProvider
         });
 
         // ── Partage des paramètres globaux avec toutes les vues
+        // Enveloppé dans un try/catch : certaines commandes (ex. composer
+        // install → package:discover) tournent sans base de données
+        // disponible (CI, premier déploiement avant migration...).
         $data_parametre = null;
 
-        if (Schema::hasTable('parametres')) {
-            $data_parametre = Parametre::with('media')->first();
+        try {
+            if (Schema::hasTable('parametres')) {
+                $data_parametre = Parametre::with('media')->first();
+            }
+        } catch (\Exception $e) {
+            logger()->error('Erreur chargement paramètres : ' . $e->getMessage());
         }
 
         view()->share([
