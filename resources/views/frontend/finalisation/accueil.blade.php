@@ -445,32 +445,25 @@
         <div class="divider-line mx-auto"></div>
       </div>
       <div class="row g-3 justify-content-center">
-        <div class="col-sm-6 col-lg-3">
+        <div class="col-sm-6 col-lg-4">
           <div class="contact-card">
-            <span class="icon"><i class="bi bi-telephone-fill"></i></span>
-            <h4>Téléphone</h4>
-            <a href="tel:+2250700000000">+225 07 00 00 00 00</a>
+            <span class="icon"><i class="bi bi-whatsapp"></i></span>
+            <h4>WhatsApp</h4>
+            <a href="tel:+2250715094421">+225 07 15 09 44 21</a>
           </div>
         </div>
-        <div class="col-sm-6 col-lg-3">
-          <div class="contact-card">
-            <span class="icon"><i class="bi bi-telephone-inbound-fill"></i></span>
-            <h4>Ligne fixe</h4>
-            <a href="tel:+2252700000000">+225 27 00 00 00 00</a>
-          </div>
-        </div>
-        <div class="col-sm-6 col-lg-3">
+        <div class="col-sm-6 col-lg-4">
           <div class="contact-card">
             <span class="icon"><i class="bi bi-envelope-fill"></i></span>
             <h4>Email</h4>
             <a href="mailto:info@schoolfoot.ci">info@schoolfoot.ci</a>
           </div>
         </div>
-        <div class="col-sm-6 col-lg-3">
+        <div class="col-sm-6 col-lg-4">
           <div class="contact-card">
             <span class="icon"><i class="bi bi-geo-alt-fill"></i></span>
             <h4>Localisation</h4>
-            <p>Abidjan, Côte d'Ivoire</p>
+            <p>Angré Les Oscars, Abidjan</p>
           </div>
         </div>
       </div>

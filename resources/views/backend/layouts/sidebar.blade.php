@@ -94,6 +94,19 @@
                         <span>INSCRIPTIONS</span>
                     </a>
                 </li>
+                @php
+                    $nbPaiementsAttente = \App\Models\Candidat::where('statut', 'en_attente_paiement')->count();
+                @endphp
+                <li class="nav-item">
+                    <a class="nav-link menu-link {{ Route::is('paiements.*') ? 'active' : '' }}"
+                        href="{{ route('paiements.index') }}">
+                        <i class="ri-wallet-3-line"></i>
+                        <span>PAIEMENTS EN ATTENTE</span>
+                        @if ($nbPaiementsAttente > 0)
+                            <span class="badge bg-warning text-dark rounded-pill ms-1">{{ $nbPaiementsAttente }}</span>
+                        @endif
+                    </a>
+                </li>
                 @endcan
 
                 @if (Auth::user()->role == 'superadmin' || Auth::user()->role == 'developpeur' || Auth::user()->can('voir-parametre'))

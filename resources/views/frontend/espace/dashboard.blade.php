@@ -86,7 +86,7 @@
   @if ($candidat->statut !== 'inscrit')
     <div class="alert alert-warning">
       Ton inscription n'est pas encore finalisée.
-      <a href="{{ route('finalisation.connexion') }}">Terminer mon inscription</a>
+      <a href="{{ route('finalisation.reprendre') }}">Terminer mon inscription</a>
     </div>
   @endif
 

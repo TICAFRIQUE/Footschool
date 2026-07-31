@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Haruncpi\LaravelIdGenerator\IdGenerator;
 use Carbon\Carbon;
 
 class Candidat extends Model
@@ -59,6 +58,11 @@ class Candidat extends Model
 
     /**
      * Génère le numéro de dossier (une seule fois, à la phase inscription).
+     * Format : FS + 3 chiffres (ex. FS001), 5 caractères au total.
+     *
+     * Le "max" est calculé uniquement parmi les numéros déjà au bon format
+     * (^FS[0-9]{3}$) pour ignorer les anciens numéros (ex. FS2026000001)
+     * qui fausseraient sinon le calcul.
      */
     public function genererNumeroDossier(): string
     {
@@ -66,12 +70,13 @@ class Candidat extends Model
             return $this->numero_dossier;
         }
 
-        $this->numero_dossier = IdGenerator::generate([
-            'table'  => 'candidats',
-            'field'  => 'numero_dossier',
-            'prefix' => 'FS' . date('Y'),
-            'length' => 12,
-        ]);
+        $dernier = static::where('numero_dossier', 'REGEXP', '^FS[0-9]{3}$')
+            ->orderByDesc('numero_dossier')
+            ->value('numero_dossier');
+
+        $prochain = $dernier ? ((int) substr($dernier, 2)) + 1 : 1;
+
+        $this->numero_dossier = 'FS' . str_pad((string) $prochain, 3, '0', STR_PAD_LEFT);
         $this->save();
 
         return $this->numero_dossier;

@@ -19,6 +19,7 @@ use App\Http\Controllers\Api\StatsController;       // ← nouveau StatsControll
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\backend\CandidatController;
 use App\Http\Controllers\backend\InscriptionController;
+use App\Http\Controllers\backend\PaiementController;
 
 
 Route::fallback(function () {
@@ -97,6 +98,10 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
 
     // ── Inscriptions (candidats inscrits + paiement) ────────────────
     Route::get('/inscriptions', [InscriptionController::class, 'index'])->name('inscriptions.index');
+
+    // ── Paiements en attente (validation manuelle Wave) ──────────────
+    Route::get('/paiements-attente', [PaiementController::class, 'index'])->name('paiements.index');
+    Route::post('/paiements-attente/{candidat}/valider', [PaiementController::class, 'valider'])->name('paiements.valider');
 });
 
 
@@ -115,6 +120,7 @@ Route::controller(InscriptionPaiementController::class)
     ->group(function () {
         Route::get('/',           'connexion')->name('connexion');
         Route::post('/verifier',  'verifier')->middleware('throttle:10,1')->name('verifier');
+        Route::get('/reprendre',  'reprendre')->middleware('espace.candidat')->name('reprendre');
 
         Route::middleware('inscription.session')->group(function () {
             Route::get('/confirmation',  'confirmation')->name('confirmation');

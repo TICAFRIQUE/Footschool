@@ -21,6 +21,32 @@ class InscriptionPaiementController extends Controller
         return view('frontend.finalisation.connexion');
     }
 
+    /**
+     * Pont entre l'espace candidat (déjà connecté) et le tunnel de finalisation
+     * d'inscription : évite de redemander le téléphone puisque le candidat est
+     * déjà authentifié via sa session espace candidat.
+     */
+    public function reprendre(Request $request)
+    {
+        $candidat = Candidat::findOrFail($request->session()->get('espace_candidat_id'));
+
+        if ($redirect = $this->bloquerSiDejaInscrit($candidat)) {
+            return $redirect;
+        }
+
+        $request->session()->put('finalisation_candidat_id', $candidat->id);
+
+        // Les infos parents sont déjà enregistrées : inutile de repasser par
+        // la confirmation et le formulaire parents, direction le paiement.
+        if ($candidat->pere_contact && $candidat->mere_contact) {
+            $request->session()->put('finalisation_confirme', true);
+
+            return redirect()->route('finalisation.paiement');
+        }
+
+        return redirect()->route('finalisation.confirmation');
+    }
+
     public function verifier(Request $request)
     {
         $validated = $request->validate([
@@ -117,8 +143,19 @@ class InscriptionPaiementController extends Controller
         }
         $this->assertInformationsCompletes($candidat);
         $montant = config('payment.montant_inscription');
+        $wavePaymentLink = config('payment.wave_payment_link');
+        $whatsappNumber = config('payment.whatsapp_number');
+        $whatsappDisplay = implode(' ', str_split(substr($whatsappNumber, -10), 2));
+        $nomComplet = $candidat->prenom . ' ' . strtoupper($candidat->nom);
+        $whatsappMessage = "Bonjour, voici la preuve de paiement de mon inscription SchoolFoot.\n"
+            . "Nom complet : {$nomComplet}\n"
+            . "Numéro de dossier : {$candidat->numero_dossier}\n"
+            . "Téléphone : {$candidat->telephone}";
+        $whatsappLink = 'https://wa.me/' . $whatsappNumber . '?text=' . rawurlencode($whatsappMessage);
 
-        return view('frontend.finalisation.paiement', compact('candidat', 'montant'));
+        return view('frontend.finalisation.paiement', compact(
+            'candidat', 'montant', 'wavePaymentLink', 'whatsappNumber', 'whatsappDisplay', 'whatsappLink', 'nomComplet'
+        ));
     }
 
     public function initierPaiement(Request $request)

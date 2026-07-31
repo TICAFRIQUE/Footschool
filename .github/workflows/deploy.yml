@@ -1,0 +1,55 @@
+name: Déploiement production (FTP)
+
+# Se déclenche à chaque push sur la branche inscription.
+# Composer tourne ici, sur le runner GitHub — le serveur cPanel n'a besoin
+# que d'un compte FTP, pas d'accès SSH/terminal.
+on:
+  push:
+    branches:
+      - inscription
+  workflow_dispatch: # permet aussi de relancer le déploiement manuellement depuis l'onglet Actions
+
+jobs:
+  deploy:
+    name: Build & déploiement FTP
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Récupération du code
+        uses: actions/checkout@v4
+
+      - name: Configuration PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, xml, ctype, fileinfo, tokenizer, openssl, pdo, pdo_mysql, bcmath, gd, zip, curl
+          coverage: none
+
+      - name: Installation des dépendances Composer (production)
+        run: composer install --no-dev --optimize-autoloader --prefer-dist --no-interaction
+
+      # public/build est déjà commité dans le dépôt (assets pré-compilés),
+      # donc aucune étape npm/vite n'est nécessaire ici.
+
+      - name: Déploiement par FTP vers cPanel
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftps # si la connexion échoue, essaie "ftp" (sans chiffrement)
+          port: 21
+          server-dir: /home1/jcspr8go/schoolfoot.ci/
+          dangerous-clean-slate: false # ne supprime jamais un fichier absent du dépôt
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/.github/**
+            **/node_modules/**
+            **/tests/**
+            .env
+            .env.*
+            **/storage/**
+            **/public/storage/**
+            **/bootstrap/cache/**
+            **/.phpunit.cache/**
