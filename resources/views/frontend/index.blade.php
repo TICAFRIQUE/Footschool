@@ -298,6 +298,66 @@
 
     .btn-nav:hover { border-color: var(--orange); color: var(--orange-light); }
 
+    /* CONTACT */
+    #contact {
+      background: var(--pitch);
+      padding: 70px 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #contact::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 0%, rgba(244, 124, 32, 0.1) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .contact-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 14px;
+      padding: 24px 20px;
+      height: 100%;
+      text-align: center;
+      transition: border-color 0.3s, transform 0.3s;
+    }
+
+    .contact-card:hover { border-color: var(--orange); transform: translateY(-4px); }
+
+    .contact-card .icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: rgba(244, 124, 32, 0.15);
+      color: var(--orange-light);
+      font-size: 1.3rem;
+      margin-bottom: 14px;
+    }
+
+    .contact-card h4 {
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--white);
+      margin-bottom: 8px;
+    }
+
+    .contact-card p, .contact-card a {
+      font-size: 0.92rem;
+      color: rgba(248, 249, 245, 0.75);
+      text-decoration: none;
+      margin: 0;
+    }
+
+    .contact-card a:hover { color: var(--orange-light); }
+
     .scroll-hint {
       position: absolute;
       bottom: 28px;
@@ -820,13 +880,14 @@
   <!-- ANTI-SCAM BANNER -->
   <div id="scam-banner">
     <span class="shield">🛡️</span>
-    Préinscription 100% GRATUITE &mdash; Ne payez jamais un tiers ! Les frais d'inscription officiels se règlent UNIQUEMENT sur cette plateforme.
+    Inscription officielle &mdash; Les frais ({{ number_format(config('payment.montant_inscription'), 0, ',', ' ') }} FCFA) se paient UNIQUEMENT sur cette plateforme. Ne payez jamais à un tiers !
     <span class="shield">🛡️</span>
   </div>
 
   <!-- TOP BAR -->
   <div class="top-bar">
     <a href="{{ route('accueil') }}" class="btn-nav"><i class="bi bi-house-door"></i> Accueil</a>
+    <a href="#contact" class="btn-nav"><i class="bi bi-envelope"></i> Contactez-nous</a>
     @if (session('espace_candidat_id'))
       <a href="{{ route('espace.dashboard') }}" class="btn-nav"><i class="bi bi-person-badge"></i> Mon espace</a>
     @else
@@ -1204,6 +1265,40 @@
               </p>
 
             </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="container">
+      <div class="text-center mb-5">
+        <p class="section-label">Une question ?</p>
+        <h2 class="section-title">Contacte-<span class="text-orange">nous</span></h2>
+        <div class="divider-line mx-auto"></div>
+      </div>
+      <div class="row g-3 justify-content-center">
+        <div class="col-sm-6 col-lg-4">
+          <div class="contact-card">
+            <span class="icon"><i class="bi bi-whatsapp"></i></span>
+            <h4>WhatsApp</h4>
+            <a href="tel:+2250715094421">+225 07 15 09 44 21</a>
+          </div>
+        </div>
+        <div class="col-sm-6 col-lg-4">
+          <div class="contact-card">
+            <span class="icon"><i class="bi bi-envelope-fill"></i></span>
+            <h4>Email</h4>
+            <a href="mailto:info@schoolfoot.ci">info@schoolfoot.ci</a>
+          </div>
+        </div>
+        <div class="col-sm-6 col-lg-4">
+          <div class="contact-card">
+            <span class="icon"><i class="bi bi-geo-alt-fill"></i></span>
+            <h4>Localisation</h4>
+            <p>Angré Les Oscars, Abidjan</p>
           </div>
         </div>
       </div>
