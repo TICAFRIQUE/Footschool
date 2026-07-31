@@ -251,15 +251,27 @@
       transform: translateY(-3px);
     }
 
-    .btn-main-outline .btn-caption {
+    .btn-caption {
       display: block;
       font-family: "Nunito", sans-serif;
-      font-size: 0.62rem;
-      font-weight: 600;
+      font-size: 0.98rem;
+      font-weight: 700;
       letter-spacing: 0.02em;
       text-transform: none;
-      opacity: 0.75;
-      margin-top: 2px;
+      color: var(--white);
+      opacity: 0.95;
+      margin-top: 4px;
+    }
+
+    .btn-cta-small {
+      font-size: clamp(0.95rem, 2.6vw, 1.15rem) !important;
+      padding: 9px 28px !important;
+    }
+
+    .btn-cta-big {
+      font-size: clamp(1.4rem, 4.2vw, 1.85rem) !important;
+      padding: 16px 48px !important;
+      box-shadow: 0 10px 34px rgba(244, 124, 32, 0.45);
     }
 
     .hero-cta-row {
@@ -904,14 +916,13 @@
       <div class="hero-tag">Côte d'Ivoire &bull; Saison &bull; 2026</div>
       <h1 class="hero-title">School<span>Foot</span></h1>
       <p class="hero-sub">La 1ère Téléréalité de Détection de Talents Footballistiques en Côte d'Ivoire</p>
-      <div class="hero-free-badge"><span>✅</span> Préinscription 100% Gratuite &amp; Ouverte à Tous</div>
       <div class="hero-cta">
         <div class="hero-cta-row">
-          <a href="#inscription" class="btn-main">⚽ &nbsp;Commencer ma préinscription</a>
-          <a href="{{ route('espace.entree') }}" class="btn-main-outline">
+          <a href="{{ route('espace.entree') }}" class="btn-main btn-cta-big">
             Déjà préinscrit ?
-            <span class="btn-caption">finaliser votre inscription</span>
+            <span class="btn-caption">Finaliser votre inscription</span>
           </a>
+          <a href="#inscription" class="btn-main-outline btn-cta-small">⚽ &nbsp;Commencer ma préinscription</a>
         </div>
       </div>
     </div>
@@ -1873,8 +1884,8 @@
         unblock.classList.remove('visible');
       }
 
-      /* Déclenche 5 secondes après le chargement */
-      setTimeout(openOverlay, 5000);
+      /* Vidéo désactivée pour le moment */
+      // setTimeout(openOverlay, 5000);
 
       /* Bouton Fermer */
       closeBtn.addEventListener('click', closeOverlay);
