@@ -379,6 +379,8 @@
         <a href="{{ route('finalisation.connexion') }}" class="btn-main">📋 &nbsp;Commencer mon inscription</a>
       </div>
       <div class="hero-links">
+        <a href="{{ route('preinscription') }}#inscription">Pas encore préinscrit ? Commence ici</a>
+        &nbsp;&bull;&nbsp;
         @if (session('espace_candidat_id'))
           <a href="{{ route('espace.dashboard') }}">Mon espace candidat</a>
         @else
